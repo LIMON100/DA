@@ -11,3 +11,13 @@ https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/POREXF
 or you can find full dataset in Kaggle.
 
 https://www.kaggle.com/rifat963/dhakaai-dhaka-based-traffic-detection-dataset
+
+
+
+## ALGORITHMS
+
+YOLOV3
+YOLOV5
+SSD_MOBILENET
+FASTER R-CNN
+MASK R-CNN
