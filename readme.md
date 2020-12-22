@@ -16,13 +16,13 @@ https://www.kaggle.com/rifat963/dhakaai-dhaka-based-traffic-detection-dataset
 
 ## ALGORITHMS
 
-###YOLOV3
+#### YOLOV3
 
-###YOLOV5
+#### YOLOV5
 
-###SSD_MOBILENET
+#### SSD_MOBILENET
 
-###FASTER R-CNN
+#### FASTER R-CNN
 
-###MASK R-CNN
+#### MASK R-CNN
 
