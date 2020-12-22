@@ -26,3 +26,5 @@ https://www.kaggle.com/rifat963/dhakaai-dhaka-based-traffic-detection-dataset
 
 #### MASK R-CNN
 
+
+Inside every algorithm folder there is clear details about that algorithm and how to train them using Custom dataset.
