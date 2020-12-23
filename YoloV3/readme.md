@@ -98,7 +98,35 @@ To find the intersection of the two boxes  (𝑥𝑖1,𝑦𝑖1,𝑥𝑖2,𝑦�
   The two boxes may intersect at the edges or vertices, in which case the intersection area is still zero. This happens when either the height or width (or both) of the calculated intersection is zero.
 
 
+The important rule to apply NMS:
+1. Select the box that has the highest score.
 
-## Anchors
+2. Compute its overlap with all other boxes, and remove boxes that overlap it more than iou_threshold.
+
+3. Go back to step 1 and iterate until there are no more boxes with a lower score than the currently selected box.
+
+
+## SUMMARY :
+
+1. Input image (height, width, 3)
+
+2. The input image goes through a CNN, resulting in a (19,19,5,85) dimensional output.
+
+3. After flattening the last two dimensions, the output is a volume of shape (19, 19, 425):
+
+  - Each cell in a 19x19 grid over the input image gives 425 numbers.
+          
+  - 425 = 5 x 85 because each cell contains predictions for 5 boxes, corresponding to 5 anchor boxes, as seen in lecture.
+          
+   - 85 = 5 + 80 where 5 is because  (𝑝𝑐,𝑏𝑥,𝑏𝑦,𝑏ℎ,𝑏𝑤)  has 5 numbers, and 80 is the number of classes we'd like to detect
+          
+          
+4. You then select only few boxes based on:
+
+   - Score-thresholding: throw away boxes that have detected a class with a score less than the threshold
+          
+   - Non-max suppression: Compute the Intersection over Union and avoid selecting overlapping boxes
+
+
 
 ## Training with Custom Dataset
