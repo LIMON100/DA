@@ -1,5 +1,5 @@
 
-# Topics Covered
+![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV3/images/1%20(1).png?raw=true)
 
 ## What is YOLO
 
@@ -20,31 +20,9 @@ The feature extractor YOLO V3 uses is called Darknet-53. YOLOV3 makes use of onl
   ![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV3/images/da.PNG?raw=true)
   
  
- 
-## GRID
-
-Yolo using grid to find output. 
-1. Is an object in that cell
-2. Class of that object
-3. predicted bounding boxes of that object.
-
-## TRAINING GRID
-
-1. Break it into grid
-2. Manually assign a ground truth vector with each grid cell
-3. Each training image it locate the mid-point of each object in the image
-4. Assign the true bounding box to grid cell that contains that mid-point
-
-
 
 
 ## How it works
-
-1. Test images divided into grid.
-2. Each grid cell is tell is there any object,class and bounding boxes
-3. Set the number of anchor boxes. Each anchor box go each grid cell and find the object.
-4. 
-
 
 
 Now suppoese the input is a batch of images, and each image has the shape (m, 608, 608, 3)
@@ -147,3 +125,6 @@ After apply Non-max-suppression
 
 
 ## Training with Custom Dataset
+
+
+![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV3/images/1%20(2).png?raw=true)
