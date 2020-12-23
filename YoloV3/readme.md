@@ -53,19 +53,27 @@ The output is a list of bounding boxes along with the recognized classes. Each b
 
 Anchor boxes are chosen by exploring the training data to choose reasonable height/width ratios that represent the different classes. Suppose we choose, 5 anchor boxes were chosen (to cover the 80 classes). 
 The dimension for anchor boxes is the second to last dimension in the encoding:  (𝑚, 𝑛𝐻, 𝑛𝑊, 𝑎𝑛𝑐ℎ𝑜𝑟𝑠, 𝑐𝑙𝑎𝑠𝑠𝑒𝑠).
-The YOLO architecture is: IMAGE (m, 608, 608, 3) -> DEEP CNN -> ENCODING (m, 19, 19, 5, 85). See the below image(e1)
+The YOLO architecture is: IMAGE (m, 608, 608, 3) -> DEEP CNN -> ENCODING (m, 19, 19, 5, 85). See the below image
+
+![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV3/images/e1.PNG?raw=true)
 
 
 If the center/midpoint of an object falls into a grid cell, that grid cell is responsible for detecting that object. Since we are using 5 anchor boxes, each of the 19 x19 cells thus encodes information about 5 boxes. Anchor boxes are defined only by their width and height.
 
-For simplicity, we will flatten the last two last dimensions of the shape (19, 19, 5, 85) encoding. So the output of the Deep CNN is (19, 19, 425). image(e2)
+For simplicity, we will flatten the last two last dimensions of the shape (19, 19, 5, 85) encoding. So the output of the Deep CNN is (19, 19, 425).
+
+![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV3/images/e2.PNG?raw=true)
 
 
 Now, for each box (of each cell) we will compute the following element-wise product and extract a probability that the box contains a certain class.
-The class score is  𝑠𝑐𝑜𝑟𝑒𝑐,𝑖=𝑝𝑐×𝑐𝑖 : the probability that there is an object  𝑝𝑐  times the probability that the object is a certain class  𝑐𝑖 . image(e3)
+The class score is  𝑠𝑐𝑜𝑟𝑒𝑐,𝑖=𝑝𝑐×𝑐𝑖 : the probability that there is an object  𝑝𝑐  times the probability that the object is a certain class  𝑐𝑖 .
+
+![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV3/images/e3.PNG?raw=true)
 
 
-After applying anchor boxes the visualization will look like this, image(tm) or ()
+After applying anchor boxes the visualization will look like this,
+
+![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV3/images/tm.PNG?raw=true)
 
 
 
@@ -82,7 +90,11 @@ tensor of shape  (19×19,5,4)  containing the midpoint and dimensions  (𝑏𝑥
 #### box_class_probs: 
 tensor of shape  (19×19,5,80)  containing the "class probabilities"  (𝑐1,𝑐2,...𝑐80)  for each of the 80 classes for each of the 5 boxes per cell.
 
-Even after filtering by thresholding over the class scores, we still end up a lot of overlapping boxes. A second filter for selecting the right boxes is called NMS. NMS uses the very important function called “Intersection over Union”, or IoU. image(nms)
+Even after filtering by thresholding over the class scores, we still end up a lot of overlapping boxes. A second filter for selecting the right boxes is called NMS. NMS uses the very important function called “Intersection over Union”, or IoU. 
+
+
+![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV3/images/nms.PNG?raw=true)
+
 
 
 #### Intersection Over Union (IOU)
@@ -104,6 +116,11 @@ The important rule to apply NMS:
 2. Compute its overlap with all other boxes, and remove boxes that overlap it more than iou_threshold.
 
 3. Go back to step 1 and iterate until there are no more boxes with a lower score than the currently selected box.
+
+
+After apply Non-max-suppression
+
+![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV3/images/AANM.PNG?raw=true)
 
 
 ## SUMMARY :
