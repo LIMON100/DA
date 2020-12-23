@@ -17,11 +17,87 @@ YOLO V3 is an improvement over previous YOLO detection networks. Compared to pri
 
 The feature extractor YOLO V3 uses is called Darknet-53. YOLOV3 makes use of only convolutional layers. As its name suggests, it contains 53 convolutional layers, each followed by a batch normalization layer and Leaky ReLU activation. No form of pooling is used, and a convolutional layer with stride 2 is used to downsample the feature maps. This helps in preventing the loss of low-level features often attributed to pooling. Below is architecture of darknet-53,
 
+  ![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV3/images/da.PNG?raw=true)
+  
+ 
+ 
+## GRID
+
+Yolo using grid to find output. 
+1. Is an object in that cell
+2. Class of that object
+3. predicted bounding boxes of that object.
+
+## TRAINING GRID
+
+1. Break it into grid
+2. Manually assign a ground truth vector with each grid cell
+3. Each training image it locate the mid-point of each object in the image
+4. Assign the true bounding box to grid cell that contains that mid-point
+
+
 
 
 ## How it works
 
-## How bounding boxes are created
+1. Test images divided into grid.
+2. Each grid cell is tell is there any object,class and bounding boxes
+3. Set the number of anchor boxes. Each anchor box go each grid cell and find the object.
+4. 
+
+
+
+Now suppoese the input is a batch of images, and each image has the shape (m, 608, 608, 3)
+The output is a list of bounding boxes along with the recognized classes. Each bounding box is represented by 6 numbers  (𝑝𝑐,𝑏𝑥,𝑏𝑦,𝑏ℎ,𝑏𝑤,𝑐)  as explained above. If you expand  𝑐(class-label)  into an 80-dimensional vector, each bounding box is then represented by 85 numbers.
+
+
+Anchor boxes are chosen by exploring the training data to choose reasonable height/width ratios that represent the different classes. Suppose we choose, 5 anchor boxes were chosen (to cover the 80 classes). 
+The dimension for anchor boxes is the second to last dimension in the encoding:  (𝑚, 𝑛𝐻, 𝑛𝑊, 𝑎𝑛𝑐ℎ𝑜𝑟𝑠, 𝑐𝑙𝑎𝑠𝑠𝑒𝑠).
+The YOLO architecture is: IMAGE (m, 608, 608, 3) -> DEEP CNN -> ENCODING (m, 19, 19, 5, 85). See the below image(e1)
+
+
+If the center/midpoint of an object falls into a grid cell, that grid cell is responsible for detecting that object. Since we are using 5 anchor boxes, each of the 19 x19 cells thus encodes information about 5 boxes. Anchor boxes are defined only by their width and height.
+
+For simplicity, we will flatten the last two last dimensions of the shape (19, 19, 5, 85) encoding. So the output of the Deep CNN is (19, 19, 425). image(e2)
+
+
+Now, for each box (of each cell) we will compute the following element-wise product and extract a probability that the box contains a certain class.
+The class score is  𝑠𝑐𝑜𝑟𝑒𝑐,𝑖=𝑝𝑐×𝑐𝑖 : the probability that there is an object  𝑝𝑐  times the probability that the object is a certain class  𝑐𝑖 . image(e3)
+
+
+After applying anchor boxes the visualization will look like this, image(tm) or ()
+
+
+
+## Non-MAX Suppression
+
+First, we filter boxes based on their objectness score. Generally, boxes having scores below a threshold (for example below 0.5) are ignored. Next, Non-maximum Suppression (NMS) intends to cure the problem of multiple detections of the same image
+
+The model gives a total of 19x19x5x85 numbers, with each box described by 85 numbers. It is convenient to rearrange the (19,19,5,85) (or (19,19,425)) dimensional tensor into the following variables:
+
+#### box_confidence: 
+tensor of shape  (19×19,5,1)  containing  𝑝𝑐  (confidence probability that there's some object) for each of the 5 boxes predicted in each of the 19x19 cells.
+#### boxes: 
+tensor of shape  (19×19,5,4)  containing the midpoint and dimensions  (𝑏𝑥,𝑏𝑦,𝑏ℎ,𝑏𝑤)  for each of the 5 boxes in each cell.
+#### box_class_probs: 
+tensor of shape  (19×19,5,80)  containing the "class probabilities"  (𝑐1,𝑐2,...𝑐80)  for each of the 80 classes for each of the 5 boxes per cell.
+
+Even after filtering by thresholding over the class scores, we still end up a lot of overlapping boxes. A second filter for selecting the right boxes is called NMS. NMS uses the very important function called “Intersection over Union”, or IoU. image(nms)
+
+
+#### Intersection Over Union (IOU)
+
+To find the intersection of the two boxes  (𝑥𝑖1,𝑦𝑖1,𝑥𝑖2,𝑦𝑖2) :
+
+  The top left corner of the intersection  (𝑥𝑖1,𝑦𝑖1)  is found by comparing the top left corners  (𝑥1,𝑦1)  of the two boxes and finding a vertex that has an x-coordinate that is closer to the right, and y-coordinate that is closer to the bottom.
+  
+  The bottom right corner of the intersection  (𝑥𝑖2,𝑦𝑖2)  is found by comparing the bottom right corners  (𝑥2,𝑦2)  of the two boxes and finding a vertex whose x-coordinate is closer to the left, and the y-coordinate that is closer to the top.
+  
+  The two boxes may have no intersection. You can detect this if the intersection coordinates you calculate end up being the top right and/or bottom left corners of an intersection box. Another way to think of this is if you calculate the height  (𝑦2−𝑦1)  or width  (𝑥2−𝑥1)  and find that at least one of these lengths is negative, then there is no intersection (intersection area is zero).
+  
+  The two boxes may intersect at the edges or vertices, in which case the intersection area is still zero. This happens when either the height or width (or both) of the calculated intersection is zero.
+
+
 
 ## Anchors
 
