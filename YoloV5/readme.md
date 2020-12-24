@@ -135,6 +135,10 @@ plot some images by calling a simple function.
 You can find everything inside training yolov5 with custom dataset notebook. I trained yolov5s only with different amount of dataset. But due to time-out problem in colab i could use another model like 5l,5l,5x. Training 4000 images in 5s almost take 10 hours it will take minimum 20 hours in 5l. So if your dataset is small then use any yolov5 model. 
 
 ![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV5/images/Shykat_02_018_jpg.rf.1dccfd91443605cf13d0f6150aaf3701.jpg?raw=true)
+![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV5/images/96b3e8e0-6ccb-4abb-8b26-1ce077fc946f.jpg?raw=true)
+![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV5/images/Shykat_5_%20(2)_jpg.rf.ed805fa1c83ffebaeaee81c35a6baae3.jpg?raw=true)
+![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV5/images/Shykat_5_%20(73)_jpg.rf.b0af436f95df90c661739e17584f8fe3.jpg?raw=true)
+![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV5/images/sabiha(252)_jpg.rf.00cd9a169d4de43b8967a68f02d2c12c.jpg?raw=true)
 
 
 
