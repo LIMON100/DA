@@ -20,7 +20,7 @@ https://www.kaggle.com/rifat963/dhakaai-dhaka-based-traffic-detection-dataset
 
 #### <a href="https://github.com/LIMON100/Dhaka-AI/tree/master/YoloV5">YOLOV5</a>
 
-#### SSD_MOBILENET
+#### <a href="https://github.com/LIMON100/Dhaka-AI/tree/master/Ssd_Mobilent_v1">SSD_MOBILENET</a>
 
 #### FASTER R-CNN
 
