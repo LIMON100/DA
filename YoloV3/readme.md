@@ -124,7 +124,13 @@ After apply Non-max-suppression
 
 
 
-## Training with Custom Dataset
+# Training with Custom Dataset
+
+## Clone and install the darknet
+
+At first download and install darknet from [https://github.com/AlexeyAB/darknet] and install it. If you have linux then it is very easy to install just run "make" on command line.
+
+
 
 
 ![](https://github.com/LIMON100/Dhaka-AI/blob/master/YoloV3/images/1%20(2).png?raw=true)
