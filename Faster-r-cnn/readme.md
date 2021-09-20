@@ -16,4 +16,4 @@
 
 #### Convert csv file to tfrecord
 
-    python generate_tfrecord.py
+    python generate_tfrecords.py --path_to_images "path your train images folder" --path_to_annot "path train csv file" --path_to_label_map "path to labelmap.pbtxt file" --path_to_save_tfrecords "save path"
