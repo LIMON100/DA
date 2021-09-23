@@ -26,3 +26,21 @@ convert validation file
     
     python generate_tfrecords.py --path_to_images "path your validation images folder" --path_to_annot "path validation csv file" --path_to_label_map "path to labelmap.pbtxt file" --path_to_save_tfrecords "save path"
 
+
+
+#### Download config file according to your desire and change this line
+
+
+change config file:
+
+num_classes: classes number
+
+batch_size: 64(better but if you don't have powerful gpu than change whatever you want)
+
+num_steps: 25000(2000 per class is better. You can set more)
+
+fine_tune_checkpoint : set path where you save trained model expample(your_checkpoint_path/ckpt-0)
+
+label_map_path: change path in train+eval
+
+input_path: change tfrecord path for both train+eval
