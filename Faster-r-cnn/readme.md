@@ -44,3 +44,13 @@ fine_tune_checkpoint : set path where you save trained model expample(your_check
 label_map_path: change path in train+eval
 
 input_path: change tfrecord path for both train+eval
+
+
+
+### Training
+
+go to models->research folder,
+
+    !PIPELINE_CONFIG_PATH='path the configuration file'
+
+    !MODEL_DIR="path to the save training file"
