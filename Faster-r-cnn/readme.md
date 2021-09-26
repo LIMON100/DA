@@ -33,17 +33,17 @@ convert validation file
 
 change config file:
 
-num_classes: classes number
+    num_classes: classes number
 
-batch_size: 64(better but if you don't have powerful gpu than change whatever you want)
+    batch_size: 64(better but if you don't have powerful gpu than change whatever you want)
 
-num_steps: 25000(2000 per class is better. You can set more)
+    num_steps: 25000(2000 per class is better. You can set more)
 
-fine_tune_checkpoint : set path where you save trained model expample(your_checkpoint_path/ckpt-0)
+    fine_tune_checkpoint : set path where you save trained model expample(your_checkpoint_path/ckpt-0)
 
-label_map_path: change path in train+eval
+    label_map_path: change path in train+eval
 
-input_path: change tfrecord path for both train+eval
+    input_path: change tfrecord path for both train+eval
 
 
 
