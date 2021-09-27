@@ -54,3 +54,9 @@ go to models->research folder,
     !PIPELINE_CONFIG_PATH='path the configuration file'
 
     !MODEL_DIR="path to the save training file"
+    
+   
+   
+run
+    
+    python object_detection/model_main_tf2.py --pipeline_config_path=${PIPELINE_CONFIG_PATH} --model_dir=${MODEL_DIR} --alsologtostderr
