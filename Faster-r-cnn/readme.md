@@ -65,7 +65,6 @@ run
 
 ### Evaluation
 
-evaluation:
 
     PIPELINE_CONFIG_PATH={path to pipeline config file}
     
