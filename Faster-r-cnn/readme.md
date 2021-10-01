@@ -78,11 +78,14 @@ run
     
     
     
+    
 ### Kick-off
+
 
 If the training interrupted due to some accident such as power interruption or sudden computer shutdown while you are training your custom object detection project using the tensor-flow object detection API using any of the sample pre-trained models such as ssd_mobilenet_v2, faster_rcnn_inception_v2 etc. Follow this steps to resume training from where your last model saved your weights or model.ckpt.
 
+
 In the folder ./object_detection/models/research/object_detection/samples/configs/ssd_mobilenet_v2_coco.config
-or whatever your pre-trained model is when you open your config file there is a section called fine_tune_checkpoint this is where the training process saves and loads its status during its training progress. change the directory location for the fine_tune_checkpoint section. Once you change that, whatever interrupted your training process to resume it just use the same command for training. It start executing from the last saved checkpoint and iteration number. Cheers!!!
+or whatever your pre-trained model is when you open your config file there is a section called fine_tune_checkpoint this is where the training process saves and loads its status during its training progress. change the directory location for the fine_tune_checkpoint section. Once you change that, whatever interrupted your training process to resume it just use the same command for training. It start executing from the last saved checkpoint and iteration number.
 
 
