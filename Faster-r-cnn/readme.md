@@ -88,7 +88,10 @@ If the training interrupted due to some accident such as power interruption or s
 In the folder ./object_detection/models/research/object_detection/samples/configs/ssd_mobilenet_v2_coco.config or whatever your pre-trained model is when you open your config file there is a section called fine_tune_checkpoint this is where the training process saves and loads its status during its training progress. change the directory location for the fine_tune_checkpoint section. Once you change that, whatever interrupted your training process to resume it just use the same command for training. It start executing from the last saved checkpoint and iteration number.
 
 
-Make frozen model for production:
-PIPELINE_CONFIG_PATH = 'set path of your configuration file'
-PIPELINE_CONFIG_PATH='/home/ubuntu/Faster-r-cnn/inference/data/faster_rcnn_resnet50_v1_640x640_coco17_tpu-8.config'
 
+
+
+
+### Make model for production:
+
+PIPELINE_CONFIG_PATH = 'set path of your configuration file'
