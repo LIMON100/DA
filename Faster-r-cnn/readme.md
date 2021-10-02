@@ -94,4 +94,5 @@ In the folder ./object_detection/models/research/object_detection/samples/config
 
 ### Make model for production:
 
+
 PIPELINE_CONFIG_PATH = 'set path of your configuration file'
