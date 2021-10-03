@@ -96,3 +96,14 @@ In the folder ./object_detection/models/research/object_detection/samples/config
 
 
 PIPELINE_CONFIG_PATH = 'set path of your configuration file'
+
+MODEL_DIR = 'your model checkpoint path'
+
+OUTPUT_DIR = 'want to save your frozen model path'
+
+    python exporter_main_v2.py --input_type="image_tensor" --pipeline_config_path=$PIPELINE_CONFIG_PATH --trained_checkpoint_dir=$MODEL_DIR --output_directory=$OUTPUT_DIR
+
+
+#### Note: 
+
+if you don't want to use last checkpoint than set which checkpoint you want to use in checkpoint folder at the top.
