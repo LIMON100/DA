@@ -24,7 +24,7 @@ https://www.kaggle.com/rifat963/dhakaai-dhaka-based-traffic-detection-dataset
 
 #### <a href="https://github.com/LIMON100/Dhaka-AI_Object-Detection/tree/master/Faster-r-cnn">FASTER R-CNN</a>
 
-#### MASK R-CNN
+#### <a href="https://github.com/LIMON100/Dhaka-AI_Object-Detection/tree/master/Faster-r-cnn">MASK R-CNN</a>
 
 
 Inside every algorithm folder there is clear details about that algorithm and how to train them using Custom dataset.
