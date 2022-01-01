@@ -3,3 +3,6 @@
 1. Annot your custom validation dataset
 2. Convert the xml file into csv file
 3. Test the custom validation dataset and create extra column name CONFIDENCE
+
+
+## Change the appropiate COLUMN name into xml_to_csv.py file and then run it.
