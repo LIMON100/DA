@@ -1,7 +1,10 @@
 # Calculate mAP for custom model
 
 ## For YOLO
-
+       
+   Convert the annotated text file to yolo format
+           
+    python convert_yolo.py
 
 ## For Pascal-VOC
 1. Annot your custom validation dataset
