@@ -4,7 +4,7 @@
        
    Convert the annotated text file to yolo format
            
-    python convert_yolo.py
+    python convert_to_yolo.py
 
 ## For Pascal-VOC
 1. Annot your custom validation dataset
