@@ -2,11 +2,13 @@
 
 ## For YOLO
        
-   1. Convert the annotated text file to yolo format
+   1. Add classes list in a text file
+   2. Insert all annotated text file in a folder
+   3. Insert images into one folder
+   4. Convert the annotated text file to yolo format
            
     python convert_to_yolo.py
     
-   2. Add classes list in a text file
 
 ## For Pascal-VOC
 1. Annot your custom validation dataset
