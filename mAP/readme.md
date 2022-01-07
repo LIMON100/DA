@@ -9,6 +9,9 @@
            
     python convert_to_yolo.py
     
+   5. Run below file to calculate mAP
+     
+    python calculate_map.py
 
 ## For Pascal-VOC
 1. Annot your custom validation dataset
