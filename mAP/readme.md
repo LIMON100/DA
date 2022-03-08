@@ -27,4 +27,4 @@
 
 ## For MAIXPY
 
-![](https://github.com/LIMON100/Deploy-ML/tree/master/Maixduino/Calculate_mAP)
+https://github.com/LIMON100/Deploy-ML/tree/master/Maixduino/Calculate_mAP
