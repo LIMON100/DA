@@ -24,6 +24,7 @@
 
 ## Change the appropiate COLUMN name into xml_to_csv.py file and then run it.
 
+## Different type of bounding box format
 
 ## For MAIXPY
 
