@@ -1,5 +1,7 @@
 # Calculate mAP for custom model
 
+## Different type of bounding box format
+
 ## For YOLO
        
    1. Add classes list in a text file
@@ -23,8 +25,6 @@
 
 
 ## Change the appropiate COLUMN name into xml_to_csv.py file and then run it.
-
-## Different type of bounding box format
 
 ## For MAIXPY
 
