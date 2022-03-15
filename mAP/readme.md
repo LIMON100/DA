@@ -7,6 +7,20 @@ The bounding box has the following (x, y) coordinates of its corners: top-left i
 There are multiple formats of bounding boxes annotations. Each format uses its specific representation of bouning boxes coordinates. Albumentations supports four formats:  
 
 
+## Pascal VOC Bounding box :(x-top left, y-top left, x-bottom right, y-bottom right)
+
+Pascal VOC provides standardized image data sets for object detection
+
+Difference between COCO and Pacal VOC data formats will quickly help understand the two data formats
+
+Pascal VOC is an XML file, unlike COCO which has a JSON file.
+
+In Pascal VOC we create a file for each of the image in the dataset. In COCO we have one file each, for entire dataset for training, testing and validation.
+
+The bounding Box in Pascal VOC and COCO data formats are different
+
+Pascal_voc is a format used by the Pascal VOC dataset. Coordinates of a bounding box are encoded with four values in pixels: [x_min, y_min, x_max, y_max]. x_min and y_min are coordinates of the top-left corner of the bounding box. x_max and y_max are coordinates of bottom-right corner of the bounding box
+
 ## For YOLO
        
    1. Add classes list in a text file
