@@ -21,6 +21,11 @@ Difference between COCO and Pacal VOC data formats will quickly help understand 
 
 Pascal_voc is a format used by the Pascal VOC dataset. Coordinates of a bounding box are encoded with four values in pixels: [x_min, y_min, x_max, y_max]. x_min and y_min are coordinates of the top-left corner of the bounding box. x_max and y_max are coordinates of bottom-right corner of the bounding box
 
+
+## Albumentations
+
+Like pascal_voc albumentations also uses four values [x_min, y_min, x_max, y_max] to represent a bounding box. But unlike pascal_voc, albumentations uses normalized values. To normalize values, we divide coordinates in pixels for the x- and y-axis by the width and the height of the image.
+
 ## For YOLO
        
    1. Add classes list in a text file
