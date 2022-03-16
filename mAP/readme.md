@@ -26,6 +26,14 @@ Pascal_voc is a format used by the Pascal VOC dataset. Coordinates of a bounding
 
 Like pascal_voc albumentations also uses four values [x_min, y_min, x_max, y_max] to represent a bounding box. But unlike pascal_voc, albumentations uses normalized values. To normalize values, we divide coordinates in pixels for the x- and y-axis by the width and the height of the image.
 
+Let the coordinates of the bounding box are x1= 359, y1= 20, x2= 582, y2= 224 
+
+Hignt =638 width=850, then:
+
+359 / 850, 20 / 638, 582 / 850,224 / 638] which are [0.422352, 0.031347, 0.684705, 0.351097].
+
+Albumentations uses this format internally to work with bounding boxes and augment them.
+
 ## For YOLO
        
    1. Add classes list in a text file
