@@ -34,6 +34,15 @@ Like pascal_voc albumentations also uses four values [x_min, y_min, x_max, y_max
 
 Albumentations uses this format internally to work with bounding boxes and augment them.
 
+## COCO
+
+## COCO Bounding box: (x-top left, y-top left, width, height)
+
+Coco is a format used by the Common Objects in Context COCO dataset.
+
+In coco, a bounding box is defined by four values in pixels [x_min, y_min, width, height]. They are coordinates of the top-left corner along with the width and height of the bounding box.
+
+
 ## For YOLO
        
    1. Add classes list in a text file
