@@ -43,6 +43,11 @@ Coco is a format used by the Common Objects in Context COCO dataset.
 In coco, a bounding box is defined by four values in pixels [x_min, y_min, width, height]. They are coordinates of the top-left corner along with the width and height of the bounding box.
 
 
+## YOLO
+
+In yolo, a bounding box is represented by four values [x_center, y_center, w, h]. x_center and y_center are the normalized coordinates of the center of the bounding box. To make coordinates normalized, we take pixel values of x and y, which marks the center of the bounding box on the x- and y-axis. Then we divide the value of x by the width of the image and value of y by the height of the image. w and h represent the width and the height of the bounding box. They are normalized as well.
+
+
 ## For YOLO
        
    1. Add classes list in a text file
