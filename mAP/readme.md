@@ -75,3 +75,7 @@ In yolo, a bounding box is represented by four values [x_center, y_center, w, h]
 ## For MAIXPY
 
 https://github.com/LIMON100/Deploy-ML/tree/master/Maixduino/Calculate_mAP
+
+
+
+## Bounding boxes outside of the image
