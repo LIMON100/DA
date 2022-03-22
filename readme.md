@@ -28,3 +28,8 @@ https://www.kaggle.com/rifat963/dhakaai-dhaka-based-traffic-detection-dataset
 
 
 Inside every algorithm folder there is clear details about that algorithm and how to train them using Custom dataset.
+
+
+## Problem: Bounding boxes outside of the image
+
+https://github.com/LIMON100/Object-Detection/tree/master/mAP
