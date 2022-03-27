@@ -9,7 +9,7 @@ import math
 
 import numpy as np
 
-MINOVERLAP = 0.5 
+MINOVERLAP = 0.3 # default value (defined in the PASCAL VOC2012 challenge)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-na', '--no-animation', help="no animation is shown.", action="store_true")
@@ -22,6 +22,7 @@ parser.add_argument('--set-class-iou', nargs='+', type=str, help="set IoU for a 
 args = parser.parse_args()
 
 
+# if there are no classes to ignore then replace None by empty list
 if args.ignore is None:
     args.ignore = []
 
@@ -29,22 +30,25 @@ specific_iou_flagged = False
 if args.set_class_iou is not None:
     specific_iou_flagged = True
 
+# make sure that the cwd() is the location of the python script (so that every path makes sense)
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-GT_PATH = os.path.join(os.getcwd(), 'yolo2', 'annotations')
-DR_PATH = os.path.join(os.getcwd(), 'yolo2', 'predictions')
+#GT_PATH = os.path.join(os.getcwd(), 'I:/JumpWatts/Dataset/map/test-helmt/new-mp/road-test', 'ground-truth')
+#DR_PATH = os.path.join(os.getcwd(), 'I:/JumpWatts/Dataset/map/test-helmt/new-mp/road-test', 'detection-results')
+
+GT_PATH = os.path.join(os.getcwd(), 'new_sidewalk320', 'ground-truth')
+DR_PATH = os.path.join(os.getcwd(), 'new_sidewalk320', 'detection-results')
 # if there are no images then no animation can be shown
-IMG_PATH = os.path.join(os.getcwd(), 'yolo2', 'images')
+IMG_PATH = os.path.join(os.getcwd(), 'new_sidewalk320', 'images')
 if os.path.exists(IMG_PATH): 
     for dirpath, dirnames, files in os.walk(IMG_PATH):
         if not files:
             # no image files found
             args.no_animation = True
-            
 else:
     args.no_animation = True
 
-
+# try to import OpenCV if the user didn't choose the option --no-animation
 show_animation = False
 if not args.no_animation:
     try:
@@ -54,7 +58,7 @@ if not args.no_animation:
         print("\"opencv-python\" not found, please install to visualize the results.")
         args.no_animation = True
 
-
+# try to import Matplotlib if the user didn't choose the option --no-plot
 draw_plot = False
 if not args.no_plot:
     try:
@@ -66,6 +70,21 @@ if not args.no_plot:
 
 
 def log_average_miss_rate(prec, rec, num_images):
+    """
+        log-average miss rate:
+            Calculated by averaging miss rates at 9 evenly spaced FPPI points
+            between 10e-2 and 10e0, in log-space.
+
+        output:
+                lamr | log-average miss rate
+                mr | miss rate
+                fppi | false positives per image
+
+        references:
+            [1] Dollar, Piotr, et al. "Pedestrian Detection: An Evaluation of the
+               State of the Art." Pattern Analysis and Machine Intelligence, IEEE
+               Transactions on 34.4 (2012): 743 - 761.
+    """
 
     # if there were no detections of that class
     if prec.size == 0:
@@ -80,16 +99,18 @@ def log_average_miss_rate(prec, rec, num_images):
     fppi_tmp = np.insert(fppi, 0, -1.0)
     mr_tmp = np.insert(mr, 0, 1.0)
 
+    # Use 9 evenly spaced reference points in log-space
     ref = np.logspace(-2.0, 0.0, num = 9)
     for i, ref_i in enumerate(ref):
-        #
+        # np.where() will always find at least 1 index, since min(ref) = 0.01 and min(fppi_tmp) = -1.0
         j = np.where(fppi_tmp <= ref_i)[-1][-1]
         ref[i] = mr_tmp[j]
 
- 
+    # log(0) is undefined, so we use the np.maximum(1e-10, ref)
     lamr = math.exp(np.mean(np.log(np.maximum(1e-10, ref))))
 
     return lamr, mr, fppi
+
 
 """
  throw error and exit
@@ -111,30 +132,63 @@ def is_float_between_0_and_1(value):
     except ValueError:
         return False
 
-
+"""
+ Calculate the AP given the recall and precision array
+    1st) We compute a version of the measured precision/recall curve with
+         precision monotonically decreasing
+    2nd) We compute the AP as the area under this curve by numerical integration.
+"""
 def voc_ap(rec, prec):
-  
+    """
+    --- Official matlab code VOC2012---
+    mrec=[0 ; rec ; 1];
+    mpre=[0 ; prec ; 0];
+    for i=numel(mpre)-1:-1:1
+            mpre(i)=max(mpre(i),mpre(i+1));
+    end
+    i=find(mrec(2:end)~=mrec(1:end-1))+1;
+    ap=sum((mrec(i)-mrec(i-1)).*mpre(i));
+    """
     rec.insert(0, 0.0) # insert 0.0 at begining of list
     rec.append(1.0) # insert 1.0 at end of list
     mrec = rec[:]
-    prec.insert(0, 0.0) 
-    prec.append(0.0) 
+    prec.insert(0, 0.0) # insert 0.0 at begining of list
+    prec.append(0.0) # insert 0.0 at end of list
     mpre = prec[:]
-
+    """
+     This part makes the precision monotonically decreasing
+        (goes from the end to the beginning)
+        matlab: for i=numel(mpre)-1:-1:1
+                    mpre(i)=max(mpre(i),mpre(i+1));
+    """
+    # matlab indexes start in 1 but python in 0, so I have to do:
+    #     range(start=(len(mpre) - 2), end=0, step=-1)
+    # also the python function range excludes the end, resulting in:
+    #     range(start=(len(mpre) - 2), end=-1, step=-1)
     for i in range(len(mpre)-2, -1, -1):
         mpre[i] = max(mpre[i], mpre[i+1])
-  
+    """
+     This part creates a list of indexes where the recall changes
+        matlab: i=find(mrec(2:end)~=mrec(1:end-1))+1;
+    """
     i_list = []
     for i in range(1, len(mrec)):
         if mrec[i] != mrec[i-1]:
             i_list.append(i) # if it was matlab would be i + 1
-   
+    """
+     The Average Precision (AP) is the area under the curve
+        (numerical integration)
+        matlab: ap=sum((mrec(i)-mrec(i-1)).*mpre(i));
+    """
     ap = 0.0
     for i in i_list:
         ap += ((mrec[i]-mrec[i-1])*mpre[i])
     return ap, mrec, mpre
 
 
+"""
+ Convert the lines of a file to a list
+"""
 def file_lines_to_list(path):
     # open txt file lines to a list
     with open(path) as f:
@@ -144,6 +198,126 @@ def file_lines_to_list(path):
     return content
 
 
+
+"""
+Make html file for output images, map
+"""
+
+def make_html():
+    f=open("output/validation_images.html", "w")
+    message='''
+    <html>
+    <head>
+        <style type="text/css">
+        .gallery li {
+        display: inline;
+        list-style: none;
+        width: 150px;
+        min-height: 175px;
+        float: left;
+        margin: 0 10px 10px 0;
+        text-align: center;
+        }
+        </style>
+    </head>
+
+    <body>
+        <h2>Images with class name and confidence level</h2>
+        <a><img src="images/detections_one_by_one/road_detection0.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection1.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection2.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection3.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection4.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection5.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection6.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection7.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection8.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection9.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection10.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection11.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection12.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection22.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection13.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection14.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection15.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection16.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection17.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection18.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection19.jpg"></a>
+        <a><img src="images/detections_one_by_one/road_detection20.jpg"></a>
+        <a><img src="images/detections_one_by_one/sidewalk_detection1.jpg"></a>
+        <a><img src="images/detections_one_by_one/sidewalk_detection2.jpg"></a>
+        <a><img src="images/detections_one_by_one/sidewalk_detection3.jpg"></a>
+        <a><img src="images/detections_one_by_one/sidewalk_detection4.jpg"></a>
+        <a><img src="images/detections_one_by_one/sidewalk_detection5.jpg"></a>
+        <a><img src="images/detections_one_by_one/sidewalk_detection6.jpg"></a>
+        <a><img src="images/detections_one_by_one/sidewalk_detection7.jpg"></a>
+        <a><img src="images/detections_one_by_one/sidewalk_detection8.jpg"></a>
+        <a><img src="images/detections_one_by_one/sidewalk_detection9.jpg"></a>
+        <a><img src="images/detections_one_by_one/sidewalk_detection10.jpg"></a>
+        <a><img src="images/detections_one_by_one/sidewalk_detection11.jpg"></a>
+        <a><img src="images/detections_one_by_one/sidewalk_detection12.jpg"></a>
+        
+    </body>
+
+    <body>
+        <h2>Actual annotation vs Predicted annotation</h2>
+        <a><img src="images/1.jpg"></a>
+        <a><img src="images/2.jpg"></a>
+        <a><img src="images/3.jpg"></a>
+        <a><img src="images/4.jpg"></a>
+        <a><img src="images/5.jpg"></a>
+        <a><img src="images/6.jpg"></a>
+        <a><img src="images/7.jpg"></a>
+        <a><img src="images/8.jpg"></a>
+        <a><img src="images/9.jpg"></a>
+        <a><img src="images/10.jpg"></a>
+        <a><img src="images/11.jpg"></a>
+        <a><img src="images/12.jpg"></a>
+        <a><img src="images/13.jpg"></a>
+        <a><img src="images/14.jpg"></a>
+        <a><img src="images/15.jpg"></a>
+        <a><img src="images/16.jpg"></a>
+        <a><img src="images/17.jpg"></a>
+        <a><img src="images/18.jpg"></a>
+        <a><img src="images/19.jpg"></a>
+        <a><img src="images/20.jpg"></a>
+        <a><img src="images/21.jpg"></a>
+        <a><img src="images/22.jpg"></a>
+        <a><img src="images/23.jpg"></a>
+        <a><img src="images/24.jpg"></a>
+    </body>
+
+    <body>
+        <h2>Detection result</h2>
+        <a><img src="detection-results-info.png"></a>
+        
+    </body>
+
+    <body>
+        <h2>Mean average precision</h2>
+        <a><img src="mAP.png"></a>
+        
+    </body>
+
+    <body>
+        <h2>No. of object per class</h2>
+        <a><img src="ground-truth-info.png"></a>
+        
+    </body>
+
+    </html>
+    '''
+
+    f.write(message)
+    f.close()
+
+
+
+
+"""
+ Draws text in image
+"""
 def draw_text_in_image(img, text, pos, color, line_width):
     font = cv2.FONT_HERSHEY_PLAIN
     fontScale = 1
@@ -158,7 +332,9 @@ def draw_text_in_image(img, text, pos, color, line_width):
     text_width, _ = cv2.getTextSize(text, font, fontScale, lineType)[0]
     return img, (line_width + text_width)
 
-
+"""
+ Plot - adjust axes
+"""
 def adjust_axes(r, t, fig, axes):
     # get text width for re-scaling
     bb = t.get_window_extent(renderer=r)
@@ -171,7 +347,9 @@ def adjust_axes(r, t, fig, axes):
     x_lim = axes.get_xlim()
     axes.set_xlim([x_lim[0], x_lim[1]*propotion])
 
-
+"""
+ Draw plot using Matplotlib
+"""
 def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, output_path, to_show, plot_color, true_p_bar):
     # sort the dictionary by decreasing value, into a list of tuples
     sorted_dic_by_value = sorted(dictionary.items(), key=operator.itemgetter(1))
@@ -179,7 +357,12 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
     sorted_keys, sorted_values = zip(*sorted_dic_by_value)
     # 
     if true_p_bar != "":
-       
+        """
+         Special case to draw in:
+            - green -> TP: True Positives (object detected and matches ground-truth)
+            - red -> FP: False Positives (object detected but does not match ground-truth)
+            - pink -> FN: False Negatives (object not detected but present in the ground-truth)
+        """
         fp_sorted = []
         tp_sorted = []
         for key in sorted_keys:
@@ -258,7 +441,9 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
     # close the plot
     plt.close()
 
-
+"""
+ Create a ".temp_files/" and "output/" directory
+"""
 TEMP_FILES_PATH = ".temp_files"
 if not os.path.exists(TEMP_FILES_PATH): # if it doesn't exist already
     os.makedirs(TEMP_FILES_PATH)
@@ -273,7 +458,11 @@ if draw_plot:
 if show_animation:
     os.makedirs(os.path.join(output_files_path, "images", "detections_one_by_one"))
 
-
+"""
+ ground-truth
+     Load each of the ground-truth files into a temporary ".json" file.
+     Create a list of all the class names present in the ground-truth (gt_classes).
+"""
 # get a list with the ground-truth files
 ground_truth_files_list = glob.glob(GT_PATH + '/*.txt')
 if len(ground_truth_files_list) == 0:
@@ -351,7 +540,10 @@ n_classes = len(gt_classes)
 #print(gt_classes)
 #print(gt_counter_per_class)
 
-
+"""
+ Check format of the flag --set-class-iou (if used)
+    e.g. check if class exists
+"""
 if specific_iou_flagged:
     n_args = len(args.set_class_iou)
     error_msg = \
@@ -372,7 +564,10 @@ if specific_iou_flagged:
         if not is_float_between_0_and_1(num):
             error('Error, IoU must be between 0.0 and 1.0. Flag usage:' + error_msg)
 
-
+"""
+ detection-results
+     Load each of the detection-results files into a temporary ".json" file.
+"""
 # get a list with the detection-results files
 dr_files_list = glob.glob(DR_PATH + '/*.txt')
 dr_files_list.sort()
@@ -409,7 +604,9 @@ for class_index, class_name in enumerate(gt_classes):
     with open(TEMP_FILES_PATH + "/" + class_name + "_dr.json", 'w') as outfile:
         json.dump(bounding_boxes, outfile)
 
-
+"""
+ Calculate the AP for each class
+"""
 sum_AP = 0.0
 ap_dictionary = {}
 lamr_dictionary = {}
@@ -511,7 +708,9 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                 if ovmax > 0:
                     status = "INSUFFICIENT OVERLAP"
 
-          
+            """
+             Draw image to show animation
+            """
             if show_animation:
                 height, widht = img.shape[:2]
                 # colors (OpenCV works with BGR)
@@ -560,6 +759,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                 cv2.waitKey(20) # show for 20 ms
                 # save image to output
                 output_img_path = output_files_path + "/images/detections_one_by_one/" + class_name + "_detection" + str(idx) + ".jpg"
+                #output_img_path = output_files_path + "/images/detections_one_by_one/" + "_detection" + str(idx) + ".jpg"
                 cv2.imwrite(output_img_path, img)
                 # save the image with all the objects drawn to it
                 cv2.imwrite(img_cumulative_path, img_cumulative)
@@ -606,7 +806,8 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
         """
         if draw_plot:
             plt.plot(rec, prec, '-o')
-     
+            # add a new penultimate point to the list (mrec[-2], 0.0)
+            # since the last line segment (and respective area) do not affect the AP value
             area_under_curve_x = mrec[:-1] + [mrec[-2]] + [mrec[-1]]
             area_under_curve_y = mprec[:-1] + [0.0] + [mprec[-1]]
             plt.fill_between(area_under_curve_x, 0, area_under_curve_y, alpha=0.2, edgecolor='r')
@@ -623,7 +824,11 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
             axes = plt.gca() # gca - get current axes
             axes.set_xlim([0.0,1.0])
             axes.set_ylim([0.0,1.05]) # .05 to give some extra space
-         
+            # Alternative option -> wait for button to be pressed
+            #while not plt.waitforbuttonpress(): pass # wait for key display
+            # Alternative option -> normal display
+            #plt.show()
+            # save the plot
             fig.savefig(output_files_path + "/classes/" + class_name + ".png")
             plt.cla() # clear axes for next plot
 
@@ -636,7 +841,9 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
     output_file.write(text + "\n")
     print(text)
 
-
+"""
+ Draw false negatives
+"""
 if show_animation:
     pink = (203,192,255)
     for tmp_file in gt_files:
@@ -660,7 +867,9 @@ if show_animation:
 # remove the temp_files directory
 shutil.rmtree(TEMP_FILES_PATH)
 
-
+"""
+ Count total of detection-results
+"""
 # iterate through all the files
 det_counter_per_class = {}
 for txt_file in dr_files_list:
@@ -681,7 +890,9 @@ for txt_file in dr_files_list:
 dr_classes = list(det_counter_per_class.keys())
 
 
-
+"""
+ Plot the total number of occurences of each class in the ground-truth
+"""
 if draw_plot:
     window_title = "ground-truth-info"
     plot_title = "ground-truth\n"
@@ -702,7 +913,9 @@ if draw_plot:
         '',
         )
 
-
+"""
+ Write number of ground-truth objects per class to results.txt
+"""
 with open(output_files_path + "/output.txt", 'a') as output_file:
     output_file.write("\n# Number of ground-truth objects per class\n")
     for class_name in sorted(gt_counter_per_class):
@@ -717,7 +930,9 @@ for class_name in dr_classes:
         count_true_positives[class_name] = 0
 #print(count_true_positives)
 
-
+"""
+ Plot the total number of occurences of each class in the "detection-results" folder
+"""
 if draw_plot:
     window_title = "detection-results-info"
     # Plot title
@@ -743,6 +958,9 @@ if draw_plot:
         true_p_bar
         )
 
+"""
+ Write number of detected objects per class to output.txt
+"""
 with open(output_files_path + "/output.txt", 'a') as output_file:
     output_file.write("\n# Number of detected objects per class\n")
     for class_name in sorted(dr_classes):
@@ -752,7 +970,9 @@ with open(output_files_path + "/output.txt", 'a') as output_file:
         text += ", fp:" + str(n_det - count_true_positives[class_name]) + ")\n"
         output_file.write(text)
 
-
+"""
+ Draw log-average miss rate plot (Show lamr of all classes in decreasing order)
+"""
 if draw_plot:
     window_title = "lamr"
     plot_title = "log-average miss rate"
@@ -772,6 +992,9 @@ if draw_plot:
         ""
         )
 
+"""
+ Draw mAP plot (Show AP's of all classes in decreasing order)
+"""
 if draw_plot:
     window_title = "mAP"
     plot_title = "mAP = {0:.2f}%".format(mAP*100)
@@ -790,3 +1013,8 @@ if draw_plot:
         plot_color,
         ""
         )
+
+
+
+make_html()
+print("Make html file inside output folder")
