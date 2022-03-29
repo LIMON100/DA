@@ -9,7 +9,7 @@ import math
 
 import numpy as np
 
-MINOVERLAP = 0.3 # default value (defined in the PASCAL VOC2012 challenge)
+MINOVERLAP = 0.5 # default value (defined in the PASCAL VOC2012 challenge)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-na', '--no-animation', help="no animation is shown.", action="store_true")
@@ -36,10 +36,10 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 #GT_PATH = os.path.join(os.getcwd(), 'I:/JumpWatts/Dataset/map/test-helmt/new-mp/road-test', 'ground-truth')
 #DR_PATH = os.path.join(os.getcwd(), 'I:/JumpWatts/Dataset/map/test-helmt/new-mp/road-test', 'detection-results')
 
-GT_PATH = os.path.join(os.getcwd(), 'new_sidewalk320', 'ground-truth')
-DR_PATH = os.path.join(os.getcwd(), 'new_sidewalk320', 'detection-results')
+GT_PATH = os.path.join(os.getcwd(), 'road_sidewalk224', 'ground-truth')
+DR_PATH = os.path.join(os.getcwd(), 'road_sidewalk224', 'detection-results')
 # if there are no images then no animation can be shown
-IMG_PATH = os.path.join(os.getcwd(), 'new_sidewalk320', 'images')
+IMG_PATH = os.path.join(os.getcwd(), 'road_sidewalk224', 'images')
 if os.path.exists(IMG_PATH): 
     for dirpath, dirnames, files in os.walk(IMG_PATH):
         if not files:
@@ -202,115 +202,30 @@ def file_lines_to_list(path):
 """
 Make html file for output images, map
 """
+# f_html = open("validation_imagedders12.html", "w")
+# def make_html():
+#     message='''
+#     <html>
+#     <head>
+#         <style type="text/css">
+#         .gallery li {
+#         display: inline;
+#         list-style: none;
+#         width: 150px;
+#         min-height: 175px;
+#         float: left;
+#         margin: 0 10px 10px 0;
+#         text-align: center;
+#         }
+#         </style>
+#     </head>
 
-def make_html():
-    f=open("output/validation_images.html", "w")
-    message='''
-    <html>
-    <head>
-        <style type="text/css">
-        .gallery li {
-        display: inline;
-        list-style: none;
-        width: 150px;
-        min-height: 175px;
-        float: left;
-        margin: 0 10px 10px 0;
-        text-align: center;
-        }
-        </style>
-    </head>
-
-    <body>
-        <h2>Images with class name and confidence level</h2>
-        <a><img src="images/detections_one_by_one/road_detection0.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection1.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection2.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection3.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection4.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection5.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection6.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection7.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection8.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection9.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection10.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection11.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection12.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection22.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection13.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection14.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection15.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection16.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection17.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection18.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection19.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection20.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection1.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection2.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection3.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection4.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection5.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection6.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection7.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection8.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection9.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection10.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection11.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection12.jpg"></a>
+#     <body>
         
-    </body>
+#     '''
 
-    <body>
-        <h2>Actual annotation vs Predicted annotation</h2>
-        <a><img src="images/1.jpg"></a>
-        <a><img src="images/2.jpg"></a>
-        <a><img src="images/3.jpg"></a>
-        <a><img src="images/4.jpg"></a>
-        <a><img src="images/5.jpg"></a>
-        <a><img src="images/6.jpg"></a>
-        <a><img src="images/7.jpg"></a>
-        <a><img src="images/8.jpg"></a>
-        <a><img src="images/9.jpg"></a>
-        <a><img src="images/10.jpg"></a>
-        <a><img src="images/11.jpg"></a>
-        <a><img src="images/12.jpg"></a>
-        <a><img src="images/13.jpg"></a>
-        <a><img src="images/14.jpg"></a>
-        <a><img src="images/15.jpg"></a>
-        <a><img src="images/16.jpg"></a>
-        <a><img src="images/17.jpg"></a>
-        <a><img src="images/18.jpg"></a>
-        <a><img src="images/19.jpg"></a>
-        <a><img src="images/20.jpg"></a>
-        <a><img src="images/21.jpg"></a>
-        <a><img src="images/22.jpg"></a>
-        <a><img src="images/23.jpg"></a>
-        <a><img src="images/24.jpg"></a>
-    </body>
-
-    <body>
-        <h2>Detection result</h2>
-        <a><img src="detection-results-info.png"></a>
-        
-    </body>
-
-    <body>
-        <h2>Mean average precision</h2>
-        <a><img src="mAP.png"></a>
-        
-    </body>
-
-    <body>
-        <h2>No. of object per class</h2>
-        <a><img src="ground-truth-info.png"></a>
-        
-    </body>
-
-    </html>
-    '''
-
-    f.write(message)
-    f.close()
+#     f_html.write(message)
+#     #f.close()
 
 
 
@@ -370,6 +285,7 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
             tp_sorted.append(true_p_bar[key])
         plt.barh(range(n_classes), fp_sorted, align='center', color='crimson', label='False Positive')
         plt.barh(range(n_classes), tp_sorted, align='center', color='forestgreen', label='True Positive', left=fp_sorted)
+        #print("False positives" + ":" + str(true_p_bar))
         # add legend
         plt.legend(loc='lower right')
         """
@@ -611,6 +527,14 @@ sum_AP = 0.0
 ap_dictionary = {}
 lamr_dictionary = {}
 # open file to store the output
+
+f_html = open("validation_result.html", "w")
+f_html.write("<pre><h1>" + "Images with class name and confidence level" + "</h1></pre> <br>\n")
+
+# make_html()
+# message = "<pre><h1>" + "Images with class name and confidence level" + "</h1></pre> <br>\n"
+# f_html.write(message)
+
 with open(output_files_path + "/output.txt", 'w') as output_file:
     output_file.write("# AP and precision/recall per class\n")
     count_true_positives = {}
@@ -711,6 +635,8 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
             """
              Draw image to show animation
             """
+
+            
             if show_animation:
                 height, widht = img.shape[:2]
                 # colors (OpenCV works with BGR)
@@ -763,7 +689,10 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                 cv2.imwrite(output_img_path, img)
                 # save the image with all the objects drawn to it
                 cv2.imwrite(img_cumulative_path, img_cumulative)
+                
+                f_html.write('<a><img src="'+ str(output_img_path) +'"></a>')
 
+        #f_html.close()
         #print(tp)
         # compute precision/recall
         cumsum = 0
@@ -841,11 +770,20 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
     output_file.write(text + "\n")
     print(text)
 
+f_html.write("</body></html>")
+#f_html.close()
+
 """
  Draw false negatives
 """
+
+#make_html()
+message = "<pre><h1>" + "Actual annotation vs Predicted annotation" + "</h1></pre> <br>\n"
+f_html.write(message)
+
 if show_animation:
     pink = (203,192,255)
+    #f_html.write("<pre><h1>" + "Actual annotation vs Predicted annotation" + "</h1></pre> <br>\n")
     for tmp_file in gt_files:
         ground_truth_data = json.load(open(tmp_file))
         #print(ground_truth_data)
@@ -863,6 +801,11 @@ if show_animation:
                 bbgt = [ int(round(float(x))) for x in obj["bbox"].split() ]
                 cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),pink,2)
         cv2.imwrite(img_cumulative_path, img)
+        f_html.write('<a><img src="'+ str(img_cumulative_path) +'"></a>')
+        #f_html.write("<pre>" + lines + "</pre> <br>\n")
+    f_html.write("</body></html>")
+    #f_html.close()
+
 
 # remove the temp_files directory
 shutil.rmtree(TEMP_FILES_PATH)
@@ -899,6 +842,10 @@ if draw_plot:
     plot_title += "(" + str(len(ground_truth_files_list)) + " files and " + str(n_classes) + " classes)"
     x_label = "Number of objects per class"
     output_path = output_files_path + "/ground-truth-info.png"
+    message = "<pre><h1>" + "Detection result" + "</h1></pre> <br>\n"
+    f_html.write(message)
+    f_html.write('<a><img src="'+ str(output_path) +'"></a>')
+    f_html.write("</body></html>")
     to_show = False
     plot_color = 'forestgreen'
     draw_plot_func(
@@ -943,9 +890,14 @@ if draw_plot:
     # end Plot title
     x_label = "Number of objects per class"
     output_path = output_files_path + "/detection-results-info.png"
+    message = "<pre><h1>" + "No. of object per class" + "</h1></pre> <br>\n"
+    f_html.write(message)
+    f_html.write('<a><img src="'+ str(output_path) +'"></a>')
+    f_html.write("</body></html>")
     to_show = False
     plot_color = 'forestgreen'
     true_p_bar = count_true_positives
+    #print(true_p_bar)
     draw_plot_func(
         det_counter_per_class,
         len(det_counter_per_class),
@@ -961,6 +913,9 @@ if draw_plot:
 """
  Write number of detected objects per class to output.txt
 """
+
+tp = []
+fp = []
 with open(output_files_path + "/output.txt", 'a') as output_file:
     output_file.write("\n# Number of detected objects per class\n")
     for class_name in sorted(dr_classes):
@@ -968,7 +923,17 @@ with open(output_files_path + "/output.txt", 'a') as output_file:
         text = class_name + ": " + str(n_det)
         text += " (tp:" + str(count_true_positives[class_name]) + ""
         text += ", fp:" + str(n_det - count_true_positives[class_name]) + ")\n"
+        #print(" (tp:" + str(count_true_positives[class_name]) + "")
+        #print(", fp:" + str(n_det - count_true_positives[class_name]) + ")\n")
+
+        tp2 = str(count_true_positives[class_name])
+        fp2 = str(n_det - count_true_positives[class_name])
+        tp.append(tp2)
+        fp.append(fp2)
         output_file.write(text)
+
+# print("True false")
+# print(tp,fp)
 
 """
  Draw log-average miss rate plot (Show lamr of all classes in decreasing order)
@@ -1000,6 +965,10 @@ if draw_plot:
     plot_title = "mAP = {0:.2f}%".format(mAP*100)
     x_label = "Average Precision"
     output_path = output_files_path + "/mAP.png"
+    message = "<pre><h1>" + "MAP(Mean average precision)" + "</h1></pre> <br>\n"
+    f_html.write(message)
+    f_html.write('<a><img src="'+ str(output_path) +'"></a>')
+    f_html.write("</body></html>")
     to_show = True
     plot_color = 'royalblue'
     draw_plot_func(
@@ -1014,7 +983,20 @@ if draw_plot:
         ""
         )
 
+#precision = int(int(tp[0]+tp[1]) / int((tp[0]+tp[1]) + (fp[0] + fp[1])))
+tp = int(tp[0]) + int(tp[1])
+fp = int(fp[0]) + int(fp[1])
+precision = tp / int(tp + fp)
+print(precision * 100)
 
 
-make_html()
-print("Make html file inside output folder")
+file_path = "output/" + "precision.txt"
+file = open(file_path,"w")
+file.write("Precision:" + '%.2f' % (precision * 100) + "%")
+file.close()
+
+message = "<pre><h1>" + "Precision" + "</h1></pre> <br>\n"
+f_html.write(message)
+message = "<pre><h3>" + "Precision:" + '%.2f' % (precision * 100) + "%" + "</h3></pre> <br>\n"
+f_html.write(message)
+f_html.write("</body></html>")
