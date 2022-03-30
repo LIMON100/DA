@@ -6,7 +6,7 @@ import operator
 import sys
 import argparse
 import math
-
+import datetime
 import numpy as np
 
 MINOVERLAP = 0.5 # default value (defined in the PASCAL VOC2012 challenge)
@@ -36,6 +36,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 #GT_PATH = os.path.join(os.getcwd(), 'I:/JumpWatts/Dataset/map/test-helmt/new-mp/road-test', 'ground-truth')
 #DR_PATH = os.path.join(os.getcwd(), 'I:/JumpWatts/Dataset/map/test-helmt/new-mp/road-test', 'detection-results')
 
+GT_PATH2 = os.path.join(os.getcwd(), 'road_sidewalk224', 'actual')
 GT_PATH = os.path.join(os.getcwd(), 'road_sidewalk224', 'ground-truth')
 DR_PATH = os.path.join(os.getcwd(), 'road_sidewalk224', 'detection-results')
 # if there are no images then no animation can be shown
@@ -380,10 +381,18 @@ if show_animation:
      Create a list of all the class names present in the ground-truth (gt_classes).
 """
 # get a list with the ground-truth files
-ground_truth_files_list = glob.glob(GT_PATH + '/*.txt')
+
+# ground_truth_files_list = glob.glob(GT_PATH + '/*.txt')
+# if len(ground_truth_files_list) == 0:
+#     error("Error: No ground-truth files found!")
+# ground_truth_files_list.sort()
+
+
+ground_truth_files_list = glob.glob(GT_PATH2 + '/*.txt')
 if len(ground_truth_files_list) == 0:
     error("Error: No ground-truth files found!")
 ground_truth_files_list.sort()
+
 # dictionary with counter per class
 gt_counter_per_class = {}
 counter_images_per_class = {}
@@ -393,12 +402,15 @@ for txt_file in ground_truth_files_list:
     #print(txt_file)
     file_id = txt_file.split(".txt", 1)[0]
     file_id = os.path.basename(os.path.normpath(file_id))
+
     # check if there is a correspondent detection-results file
-    temp_path = os.path.join(DR_PATH, (file_id + ".txt"))
-    if not os.path.exists(temp_path):
-        error_msg = "Error. File not found: {}\n".format(temp_path)
-        error_msg += "(You can avoid this error message by running extra/intersect-gt-and-dr.py)"
-        error(error_msg)
+
+    # temp_path = os.path.join(DR_PATH, (file_id + ".txt"))
+    # if not os.path.exists(temp_path):
+    #     error_msg = "Error. File not found: {}\n".format(temp_path)
+    #     error_msg += "(You can avoid this error message by running extra/intersect-gt-and-dr.py)"
+    #     error(error_msg)
+
     lines_list = file_lines_to_list(txt_file)
     # create ground-truth dictionary
     bounding_boxes = []
@@ -529,6 +541,14 @@ lamr_dictionary = {}
 # open file to store the output
 
 f_html = open("validation_result.html", "w")
+f_html.write("<pre><h1>" + "Date" + "</h1></pre>\n")
+f_html.write("<pre><h3>" + str(datetime.datetime.now()) + "</h3></pre> <br>\n")
+f_html.write("<pre><h1>" + "Author" + "</h1></pre>\n")
+f_html.write("<pre><h3>" + str("Limon") + "</h3></pre> <br>\n")
+f_html.write("<pre><h1>" + "model_version" + "</h1></pre>\n")
+f_html.write("<pre><h3>" + str("road_sidewalk_0.0.2") + "</h3></pre> <br>\n")
+f_html.write("<pre><h1>" + "Dataset Path" + "</h1></pre>\n")
+f_html.write("<pre><h3>" '<a href="https://www.dropbox.com/home/Mahmudur%20Rahman%20Limon/Llama/Product/Dataset/Road-sidewalk/Road-sidewalk_320x224">Dataset</a></p>' "</h3></pre> <br>\n")
 f_html.write("<pre><h1>" + "Images with class name and confidence level" + "</h1></pre> <br>\n")
 
 # make_html()
@@ -860,11 +880,25 @@ if draw_plot:
         '',
         )
 
+
+"""
+Find total number of object in total
+"""
+
+total_objects = 0
+for key, value in gt_counter_per_class.items():
+        #file.write('%s:%s\n' % (key, value))
+        total_objects += value
+
+
+
 """
  Write number of ground-truth objects per class to results.txt
 """
 with open(output_files_path + "/output.txt", 'a') as output_file:
     output_file.write("\n# Number of ground-truth objects per class\n")
+    #print(gt_counter_per_class[0])
+    #print(gt_counter_per_class[1][1])
     for class_name in sorted(gt_counter_per_class):
         output_file.write(class_name + ": " + str(gt_counter_per_class[class_name]) + "\n")
 
@@ -930,6 +964,7 @@ with open(output_files_path + "/output.txt", 'a') as output_file:
         fp2 = str(n_det - count_true_positives[class_name])
         tp.append(tp2)
         fp.append(fp2)
+        #print(tp)
         output_file.write(text)
 
 # print("True false")
@@ -984,19 +1019,24 @@ if draw_plot:
         )
 
 #precision = int(int(tp[0]+tp[1]) / int((tp[0]+tp[1]) + (fp[0] + fp[1])))
+# tp = int(tp[0]) + int(tp[1])
+# fp = int(fp[0]) + int(fp[1])
+# precision = tp / int(tp + fp)
+# print(precision * 100)
+
+""" Accuracy """
 tp = int(tp[0]) + int(tp[1])
-fp = int(fp[0]) + int(fp[1])
-precision = tp / int(tp + fp)
-print(precision * 100)
+ac = tp / total_objects
+print(ac * 100)
 
 
-file_path = "output/" + "precision.txt"
+file_path = "output/" + "ac.txt"
 file = open(file_path,"w")
-file.write("Precision:" + '%.2f' % (precision * 100) + "%")
+file.write("Precision:" + '%.2f' % (ac * 100) + "%")
 file.close()
 
-message = "<pre><h1>" + "Precision" + "</h1></pre> <br>\n"
+message = "<pre><h1>" + "Accuracy" + "</h1></pre> <br>\n"
 f_html.write(message)
-message = "<pre><h3>" + "Precision:" + '%.2f' % (precision * 100) + "%" + "</h3></pre> <br>\n"
+message = "<pre><h1>" + "Precision:" + '%.2f' % (ac * 100) + "%" + "</h1></pre> <br>\n"
 f_html.write(message)
 f_html.write("</body></html>")
