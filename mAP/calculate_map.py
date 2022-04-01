@@ -7,9 +7,10 @@ import sys
 import argparse
 import math
 import datetime
+from flask import flash
 import numpy as np
 
-MINOVERLAP = 0.5 # default value (defined in the PASCAL VOC2012 challenge)
+MINOVERLAP = 0.2 # default value (defined in the PASCAL VOC2012 challenge)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-na', '--no-animation', help="no animation is shown.", action="store_true")
@@ -199,38 +200,6 @@ def file_lines_to_list(path):
     return content
 
 
-
-"""
-Make html file for output images, map
-"""
-# f_html = open("validation_imagedders12.html", "w")
-# def make_html():
-#     message='''
-#     <html>
-#     <head>
-#         <style type="text/css">
-#         .gallery li {
-#         display: inline;
-#         list-style: none;
-#         width: 150px;
-#         min-height: 175px;
-#         float: left;
-#         margin: 0 10px 10px 0;
-#         text-align: center;
-#         }
-#         </style>
-#     </head>
-
-#     <body>
-        
-#     '''
-
-#     f_html.write(message)
-#     #f.close()
-
-
-
-
 """
  Draws text in image
 """
@@ -283,9 +252,14 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
         tp_sorted = []
         for key in sorted_keys:
             fp_sorted.append(dictionary[key] - true_p_bar[key])
+            #fn_sorted.append(dictionary[key] - true_p_bar[key])
             tp_sorted.append(true_p_bar[key])
-        plt.barh(range(n_classes), fp_sorted, align='center', color='crimson', label='False Positive')
-        plt.barh(range(n_classes), tp_sorted, align='center', color='forestgreen', label='True Positive', left=fp_sorted)
+        
+        plt.barh(range(n_classes), fp_sorted, align='edge', color='crimson', label='False Positive')
+        plt.barh(range(n_classes), tp_sorted, align='edge', color='forestgreen', label='True Positive', left=fp_sorted)
+        #plt.barh(range(n_classes), 10, align='center', color='orange', label='fn')
+        #plt.barh(range(n_classes), tp_sorted, align='center', color='pink', label='False Negatives', left=fp_sorted)
+        #plt.barh(range(n_classes), 10, align='center', color='pink', label='False Negatives')
         #print("False positives" + ":" + str(true_p_bar))
         # add legend
         plt.legend(loc='lower right')
@@ -541,6 +515,7 @@ lamr_dictionary = {}
 # open file to store the output
 
 f_html = open("validation_result.html", "w")
+f_html.write('<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">')
 f_html.write("<pre><h1>" + "Date" + "</h1></pre>\n")
 f_html.write("<pre><h3>" + str(datetime.datetime.now()) + "</h3></pre> <br>\n")
 f_html.write("<pre><h1>" + "Author" + "</h1></pre>\n")
@@ -548,16 +523,62 @@ f_html.write("<pre><h3>" + str("Limon") + "</h3></pre> <br>\n")
 f_html.write("<pre><h1>" + "model_version" + "</h1></pre>\n")
 f_html.write("<pre><h3>" + str("road_sidewalk_0.0.2") + "</h3></pre> <br>\n")
 f_html.write("<pre><h1>" + "Dataset Path" + "</h1></pre>\n")
-f_html.write("<pre><h3>" '<a href="https://www.dropbox.com/home/Mahmudur%20Rahman%20Limon/Llama/Product/Dataset/Road-sidewalk/Road-sidewalk_320x224">Dataset</a></p>' "</h3></pre> <br>\n")
-f_html.write("<pre><h1>" + "Images with class name and confidence level" + "</h1></pre> <br>\n")
+f_html.write("<pre><h3>" '<a href="https://www.dropbox.com/sh/o7lq8nw2unfm3sv/AACJqRKh900c8nO87eBmxbhwa?dl=0">Dataset</a></p>' "</h3></pre> <br>\n")
+f_html.write("<pre><h1>" + "Images with class name, confidence level, " + "</h1></pre> <br>\n")
 
-# make_html()
-# message = "<pre><h1>" + "Images with class name and confidence level" + "</h1></pre> <br>\n"
-# f_html.write(message)
+
+message='''
+<html>
+<head>
+    <style type="text/css">
+    .gallery li {
+    display: inline;
+    list-style: none;
+    width: 150px;
+    min-height: 175px;
+    float: left;
+    margin: 0 10px 10px 0;
+    text-align: center;
+    }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Img No. &nbsp </th>
+            <th>Class name  &nbsp </th>
+            <th>Confidence level &nbsp </th>
+            <th>Bounding Box (x,y) &nbsp &nbsp </th>
+            <th>Bounding Box (w,h) &nbsp &nbsp </th>
+            <th>Bounding Box (x,y) &nbsp &nbsp </th>
+            <th>Bounding Box (w,h) &nbsp &nbsp </th>
+            <th>Bounding Box (x,y) &nbsp &nbsp </th>
+            <th>Bounding Box (w,h) &nbsp &nbsp </th>
+            <th>Image &nbsp &nbsp </th>
+    
+        </tr>
+
+'''
+
+f_html.write(message)
+# f_html.write("</table>")
+# f_html.write("</body></html>")
+cnt=0
+
+f = open("Nothing.txt", "a")
+f.write(str(0))
+f.write('\n')
+f.close()
+
+file_double_name = []
+file_double_name.append(0)
+dict_info = {}
 
 with open(output_files_path + "/output.txt", 'w') as output_file:
     output_file.write("# AP and precision/recall per class\n")
     count_true_positives = {}
+    # file_double_name = []
+    # file_double_name.append(0)
     for class_index, class_name in enumerate(gt_classes):
         count_true_positives[class_name] = 0
         """
@@ -655,7 +676,6 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
             """
              Draw image to show animation
             """
-
             
             if show_animation:
                 height, widht = img.shape[:2]
@@ -671,6 +691,8 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                 img, line_width = draw_text_in_image(img, text, (margin, v_pos), white, 0)
                 text = "Class [" + str(class_index) + "/" + str(n_classes) + "]: " + class_name + " "
                 img, line_width = draw_text_in_image(img, text, (margin + line_width, v_pos), light_blue, line_width)
+    
+                
                 if ovmax != -1:
                     color = light_red
                     if status == "INSUFFICIENT OVERLAP":
@@ -678,42 +700,164 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                     else:
                         text = "IoU: {0:.2f}% ".format(ovmax*100) + ">= {0:.2f}% ".format(min_overlap*100)
                         color = green
+                        #print(text)
                     img, _ = draw_text_in_image(img, text, (margin + line_width, v_pos), color, line_width)
                 # 2nd line
                 v_pos += int(bottom_border / 2.0)
                 rank_pos = str(idx+1) # rank position (idx starts at 0)
                 text = "Detection #rank: " + rank_pos + " confidence: {0:.2f}% ".format(float(detection["confidence"])*100)
                 img, line_width = draw_text_in_image(img, text, (margin, v_pos), white, 0)
+                #print(text)
+                #check here now
+
                 color = light_red
                 if status == "MATCH!":
                     color = green
                 text = "Result: " + status + " "
                 img, line_width = draw_text_in_image(img, text, (margin + line_width, v_pos), color, line_width)
 
-                font = cv2.FONT_HERSHEY_SIMPLEX
-                if ovmax > 0: # if there is intersections between the bounding-boxes
-                    bbgt = [ int(round(float(x))) for x in gt_match["bbox"].split() ]
-                    cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
-                    cv2.rectangle(img_cumulative,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
-                    cv2.putText(img_cumulative, class_name, (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
-                bb = [int(i) for i in bb]
-                cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
-                cv2.rectangle(img_cumulative,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
-                cv2.putText(img_cumulative, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
-                # show image
-                cv2.imshow("Animation", img)
-                cv2.waitKey(20) # show for 20 ms
-                # save image to output
-                output_img_path = output_files_path + "/images/detections_one_by_one/" + class_name + "_detection" + str(idx) + ".jpg"
-                #output_img_path = output_files_path + "/images/detections_one_by_one/" + "_detection" + str(idx) + ".jpg"
-                cv2.imwrite(output_img_path, img)
-                # save the image with all the objects drawn to it
-                cv2.imwrite(img_cumulative_path, img_cumulative)
-                
-                f_html.write('<a><img src="'+ str(output_img_path) +'"></a>')
+                for i in range(0, len(file_double_name)):
+                    if file_double_name[i] == ground_truth_img[0]:
+                        #print(ground_truth_img[0])
+                        cnt += 1
+                        dict_info = {ground_truth_img[0]: cnt} 
+                        break
 
-        #f_html.close()
-        #print(tp)
+                file_double_name.append(ground_truth_img[0])
+
+                for key, value in dict_info.items():
+                    if key == ground_truth_img[0]:
+                        if value >= 1:
+                            print(ground_truth_img[0])
+                            #break
+                    else:                    
+                        f_html.write("<tr><th>" + str(ground_truth_img[0].split(".")[-2]) + "</th>")
+                        f_html.write("<th>" + str(class_name) + "</th>")
+                        f_html.write("<th>" + str(detection["confidence"]) + "</th>")
+                    
+
+                        #print(cnt)
+                        font = cv2.FONT_HERSHEY_SIMPLEX
+                        if ovmax > 0: # if there is intersections between the bounding-boxes
+                            bbgt = [ int(round(float(x))) for x in gt_match["bbox"].split() ]
+                            cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
+                            cv2.rectangle(img_cumulative,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
+                        
+                            f_html.write("<th>" + "x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1]) + "(blue)"+"</th>")
+                            f_html.write("<th>" + "w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3]) + "(blue)"+"</th>")
+                            
+                            cv2.putText(img_cumulative, class_name, (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
+                            #cv2.putText(img, "Actual annotation/ground-truth", (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
+
+                        bb = [int(i) for i in bb]
+
+                        if color == (0,255,0):
+                            #print("green")
+                            f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(green)"+"</th>")
+                            f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(green)"+"</th>")
+
+                            """set empty to red"""
+                            f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(red)"+"</th>")
+                            f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(red)"+"</th>")
+                            cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
+
+                        elif color == (30,30,255):
+                            #print("light_red")
+                            """set empty to green"""
+                            f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(green)"+"</th>")
+                            f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(green)"+"</th>")
+
+                            f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(red)"+"</th>")
+                            f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(red)"+"</th>")
+                            cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
+
+            
+                        cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
+            
+                        cv2.rectangle(img_cumulative,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
+                        cv2.putText(img_cumulative, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
+                        
+                        # show image
+                        cv2.imshow("Animation", img)
+                        cv2.waitKey(20) # show for 20 ms
+                        # save image to output
+                        output_img_path = output_files_path + "/images/detections_one_by_one/" + class_name + "_detection" + str(idx) + ".jpg"
+                
+                        #cv2.putText(output_img_path, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
+                        cv2.imwrite(output_img_path, img)
+                        
+                        # save the image with all the objects drawn to it
+                        cv2.imwrite(img_cumulative_path, img_cumulative)
+                        
+                        f_html.write("<th>" + '<a><img src="'+ str(output_img_path) +'"></a>' + "</th>")
+                        #f_html.write("</tr>")
+                        #f_html.write('<a><img src="'+ str(output_img_path) +'"></a>')
+
+                # if cnt != 2:
+                    
+                #     f_html.write("<tr><th>" + str(ground_truth_img[0].split(".")[-2]) + "</th>")
+                #     f_html.write("<th>" + str(class_name) + "</th>")
+                #     f_html.write("<th>" + str(detection["confidence"]) + "</th>")
+                
+
+                #     #print(cnt)
+                #     font = cv2.FONT_HERSHEY_SIMPLEX
+                #     if ovmax > 0: # if there is intersections between the bounding-boxes
+                #         bbgt = [ int(round(float(x))) for x in gt_match["bbox"].split() ]
+                #         cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
+                #         cv2.rectangle(img_cumulative,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
+                    
+                #         f_html.write("<th>" + "x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1]) + "(blue)"+"</th>")
+                #         f_html.write("<th>" + "w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3]) + "(blue)"+"</th>")
+                        
+                #         cv2.putText(img_cumulative, class_name, (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
+                #         #cv2.putText(img, "Actual annotation/ground-truth", (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
+
+                #     bb = [int(i) for i in bb]
+
+                #     if color == (0,255,0):
+                #         #print("green")
+                #         f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(green)"+"</th>")
+                #         f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(green)"+"</th>")
+
+                #         """set empty to red"""
+                #         f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(red)"+"</th>")
+                #         f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(red)"+"</th>")
+                #         cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
+
+                #     elif color == (30,30,255):
+                #         #print("light_red")
+                #         """set empty to green"""
+                #         f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(green)"+"</th>")
+                #         f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(green)"+"</th>")
+
+                #         f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(red)"+"</th>")
+                #         f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(red)"+"</th>")
+                #         cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
+
+          
+                #     cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
+        
+                #     cv2.rectangle(img_cumulative,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
+                #     cv2.putText(img_cumulative, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
+                    
+                #     # show image
+                #     cv2.imshow("Animation", img)
+                #     cv2.waitKey(20) # show for 20 ms
+                #     # save image to output
+                #     output_img_path = output_files_path + "/images/detections_one_by_one/" + class_name + "_detection" + str(idx) + ".jpg"
+            
+                #     #cv2.putText(output_img_path, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
+                #     cv2.imwrite(output_img_path, img)
+                    
+                #     # save the image with all the objects drawn to it
+                #     cv2.imwrite(img_cumulative_path, img_cumulative)
+                    
+                #     f_html.write("<th>" + '<a><img src="'+ str(output_img_path) +'"></a>' + "</th>")
+                #     f_html.write("</tr>")
+                #     #f_html.write('<a><img src="'+ str(output_img_path) +'"></a>')
+        
+        # print(cnt)
         # compute precision/recall
         cumsum = 0
         for idx, val in enumerate(fp):
@@ -788,9 +932,11 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
     mAP = sum_AP / n_classes
     text = "mAP = {0:.2f}%".format(mAP*100)
     output_file.write(text + "\n")
-    print(text)
+    #print(text)
+    f_html.write("</tr>")
 
-f_html.write("</body></html>")
+# f_html.write("</table>")
+# f_html.write("</body></html>")
 #f_html.close()
 
 """
@@ -798,12 +944,11 @@ f_html.write("</body></html>")
 """
 
 #make_html()
-message = "<pre><h1>" + "Actual annotation vs Predicted annotation" + "</h1></pre> <br>\n"
-f_html.write(message)
+# message = "<pre><h1>" + "Actual annotation vs Predicted annotation" + "</h1></pre> <br>\n"
+# f_html.write(message)
 
 if show_animation:
     pink = (203,192,255)
-    #f_html.write("<pre><h1>" + "Actual annotation vs Predicted annotation" + "</h1></pre> <br>\n")
     for tmp_file in gt_files:
         ground_truth_data = json.load(open(tmp_file))
         #print(ground_truth_data)
@@ -817,15 +962,38 @@ if show_animation:
             img = cv2.imread(img_path)
         # draw false negatives
         for obj in ground_truth_data:
+            #print(obj)
             if not obj['used']:
                 bbgt = [ int(round(float(x))) for x in obj["bbox"].split() ]
                 cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),pink,2)
+                
+                f_html.write("<tr><th>" + str(ground_truth_img[0].split(".")[-2]) + "</th>")
+                f_html.write("<th>" + str(obj["class_name"]) + "</th>")
+                f_html.write("<th>" + str("N/A") + "</th>")
+                #pink color
+                f_html.write("<th>" + "x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1]) + "(pink)"+"</th>")
+                f_html.write("<th>" + "w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3]) + "(pink)"+"</th>")
+                
+                #green color
+                f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(green)"+"</th>")
+                f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(green)"+"</th>")
+
+                #red color
+                f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(green)"+"</th>")
+                f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(green)"+"</th>")
+
+                cv2.putText(img, "False negative", (bbgt[0],bbgt[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
+
+                f_html.write("<th>" + '<a><img src="'+ str(img_cumulative_path) +'"></a>' + "</th>")
+                #print((bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]))
         cv2.imwrite(img_cumulative_path, img)
-        f_html.write('<a><img src="'+ str(img_cumulative_path) +'"></a>')
+        #f_html.write('<a><img src="'+ str(img_cumulative_path) +'"></a>')
         #f_html.write("<pre>" + lines + "</pre> <br>\n")
-    f_html.write("</body></html>")
+    #f_html.write("</body></html>")
     #f_html.close()
 
+f_html.write("</table>")
+f_html.write("</body></html>")
 
 # remove the temp_files directory
 shutil.rmtree(TEMP_FILES_PATH)
@@ -885,13 +1053,20 @@ if draw_plot:
 Find total number of object in total
 """
 
+total_road = []
+total_sidewalk = []
+
 total_objects = 0
 for key, value in gt_counter_per_class.items():
         #file.write('%s:%s\n' % (key, value))
         total_objects += value
+        if key == "road":
+            total_road.append(value)
+        elif key == "sidewalk":
+            total_sidewalk.append(value)
 
-
-
+#print("Total count")
+#print(total_road[0], total_sidewalk)
 """
  Write number of ground-truth objects per class to results.txt
 """
@@ -924,10 +1099,10 @@ if draw_plot:
     # end Plot title
     x_label = "Number of objects per class"
     output_path = output_files_path + "/detection-results-info.png"
-    message = "<pre><h1>" + "No. of object per class" + "</h1></pre> <br>\n"
-    f_html.write(message)
-    f_html.write('<a><img src="'+ str(output_path) +'"></a>')
-    f_html.write("</body></html>")
+    #message = "<pre><h1>" + "No. of object per class" + "</h1></pre> <br>\n"
+    #f_html.write(message)
+    #f_html.write('<a><img src="'+ str(output_path) +'"></a>')
+    #f_html.write("</body></html>")
     to_show = False
     plot_color = 'forestgreen'
     true_p_bar = count_true_positives
@@ -970,6 +1145,9 @@ with open(output_files_path + "/output.txt", 'a') as output_file:
 # print("True false")
 # print(tp,fp)
 
+# print(tp[0], fp[0], total_road[0])
+# print(tp[1], fp[1], total_sidewalk[0])
+
 """
  Draw log-average miss rate plot (Show lamr of all classes in decreasing order)
 """
@@ -1004,7 +1182,7 @@ if draw_plot:
     f_html.write(message)
     f_html.write('<a><img src="'+ str(output_path) +'"></a>')
     f_html.write("</body></html>")
-    to_show = True
+    to_show = False
     plot_color = 'royalblue'
     draw_plot_func(
         ap_dictionary,
@@ -1024,10 +1202,84 @@ if draw_plot:
 # precision = tp / int(tp + fp)
 # print(precision * 100)
 
+
+tp_r = tp[0]
+tp_s = tp[1]
+fp_r = fp[0]
+fp_s = fp[1]
+
+#print(tp, fp)
+
+""" 
+Ploting conf-matrix
+"""
+category_names = ['True Positives', 'False Positives ', 'False Negatives',]
+
+results = {
+    # 'road': [tp[0], fp[0], total_road[0]],
+    # 'sidewalk': [tp[1], fp[1], total_sidewalk[0]]
+    'road': [int(tp_r), int(fp_r), int(total_road[0] - int(tp_r))],
+    'sidewalk': [int(tp_s), int(fp_s), int(total_sidewalk[0] - int(tp_s))]
+    
+}
+
+
+def survey(results, category_names):
+    """
+    Parameters
+    ----------
+    results : dict
+        A mapping from question labels to a list of answers per category.
+        It is assumed all lists contain the same number of entries and that
+        it matches the length of *category_names*.
+    category_names : list of str
+        The category labels.
+    """
+    labels = list(results.keys())
+    data = np.array(list(results.values()))
+    data_cum = data.cumsum(axis=1)
+    category_colors = plt.get_cmap('RdYlGn')(
+        np.linspace(0.15, 0.95, data.shape[1]))
+
+    fig, ax = plt.subplots(figsize=(9.2, 5))
+    ax.invert_yaxis()
+    ax.xaxis.set_visible(False)
+    ax.set_xlim(0, np.sum(data, axis=1).max())
+
+    for i, (colname, color) in enumerate(zip(category_names, category_colors)):
+        widths = data[:, i]
+        starts = data_cum[:, i] - widths
+        ax.barh(labels, widths, left=starts, height=0.5,
+                label=colname, color=color)
+        xcenters = starts + widths / 2
+
+        r, g, b, _ = color
+        text_color = 'white' if r * g * b < 0.5 else 'darkgrey'
+        for y, (x, c) in enumerate(zip(xcenters, widths)):
+            ax.text(x, y, str(int(c)), ha='center', va='center',
+                    color=text_color)
+    ax.legend(ncol=len(category_names), bbox_to_anchor=(0, 1),
+              loc='lower left', fontsize='small')
+
+    return fig, ax
+
+
+survey(results, category_names)
+plt.savefig("output" + "/detection_results.jpg")
+#plt.show()
+
+message = "<pre><h1>" + "True positve, False positive, False negetive Graph" + "</h1></pre> <br>\n"
+f_html.write(message)
+f_html.write('<a><img src="'+ str("output" + "/detection_results.jpg") +'"></a>')
+f_html.write("</body></html>")
+
+
+
+
 """ Accuracy """
 tp = int(tp[0]) + int(tp[1])
 ac = tp / total_objects
-print(ac * 100)
+#print(ac * 100)
 
 
 file_path = "output/" + "ac.txt"
