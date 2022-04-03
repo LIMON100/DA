@@ -725,137 +725,137 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
                 file_double_name.append(ground_truth_img[0])
 
-                for key, value in dict_info.items():
-                    if key == ground_truth_img[0]:
-                        if value >= 1:
-                            print(ground_truth_img[0])
-                            #break
-                    else:                    
-                        f_html.write("<tr><th>" + str(ground_truth_img[0].split(".")[-2]) + "</th>")
-                        f_html.write("<th>" + str(class_name) + "</th>")
-                        f_html.write("<th>" + str(detection["confidence"]) + "</th>")
+                # for key, value in dict_info.items():
+                #     if key == ground_truth_img[0]:
+                #         if value >= 1:
+                #             print(ground_truth_img[0])
+                #             #break
+                #     else:                    
+                #         f_html.write("<tr><th>" + str(ground_truth_img[0].split(".")[-2]) + "</th>")
+                #         f_html.write("<th>" + str(class_name) + "</th>")
+                #         f_html.write("<th>" + str(detection["confidence"]) + "</th>")
                     
 
-                        #print(cnt)
-                        font = cv2.FONT_HERSHEY_SIMPLEX
-                        if ovmax > 0: # if there is intersections between the bounding-boxes
-                            bbgt = [ int(round(float(x))) for x in gt_match["bbox"].split() ]
-                            cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
-                            cv2.rectangle(img_cumulative,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
+                #         #print(cnt)
+                #         font = cv2.FONT_HERSHEY_SIMPLEX
+                #         if ovmax > 0: # if there is intersections between the bounding-boxes
+                #             bbgt = [ int(round(float(x))) for x in gt_match["bbox"].split() ]
+                #             cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
+                #             cv2.rectangle(img_cumulative,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
                         
-                            f_html.write("<th>" + "x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1]) + "(blue)"+"</th>")
-                            f_html.write("<th>" + "w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3]) + "(blue)"+"</th>")
+                #             f_html.write("<th>" + "x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1]) + "(blue)"+"</th>")
+                #             f_html.write("<th>" + "w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3]) + "(blue)"+"</th>")
                             
-                            cv2.putText(img_cumulative, class_name, (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
-                            #cv2.putText(img, "Actual annotation/ground-truth", (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
+                #             cv2.putText(img_cumulative, class_name, (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
+                #             #cv2.putText(img, "Actual annotation/ground-truth", (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
 
-                        bb = [int(i) for i in bb]
+                #         bb = [int(i) for i in bb]
 
-                        if color == (0,255,0):
-                            #print("green")
-                            f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(green)"+"</th>")
-                            f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(green)"+"</th>")
+                #         if color == (0,255,0):
+                #             #print("green")
+                #             f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(green)"+"</th>")
+                #             f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(green)"+"</th>")
 
-                            """set empty to red"""
-                            f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(red)"+"</th>")
-                            f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(red)"+"</th>")
-                            cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
+                #             """set empty to red"""
+                #             f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(red)"+"</th>")
+                #             f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(red)"+"</th>")
+                #             cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
 
-                        elif color == (30,30,255):
-                            #print("light_red")
-                            """set empty to green"""
-                            f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(green)"+"</th>")
-                            f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(green)"+"</th>")
+                #         elif color == (30,30,255):
+                #             #print("light_red")
+                #             """set empty to green"""
+                #             f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(green)"+"</th>")
+                #             f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(green)"+"</th>")
 
-                            f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(red)"+"</th>")
-                            f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(red)"+"</th>")
-                            cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
+                #             f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(red)"+"</th>")
+                #             f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(red)"+"</th>")
+                #             cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
 
             
-                        cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
+                #         cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
             
-                        cv2.rectangle(img_cumulative,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
-                        cv2.putText(img_cumulative, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
+                #         cv2.rectangle(img_cumulative,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
+                #         cv2.putText(img_cumulative, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
                         
-                        # show image
-                        cv2.imshow("Animation", img)
-                        cv2.waitKey(20) # show for 20 ms
-                        # save image to output
-                        output_img_path = output_files_path + "/images/detections_one_by_one/" + class_name + "_detection" + str(idx) + ".jpg"
+                #         # show image
+                #         cv2.imshow("Animation", img)
+                #         cv2.waitKey(20) # show for 20 ms
+                #         # save image to output
+                #         output_img_path = output_files_path + "/images/detections_one_by_one/" + class_name + "_detection" + str(idx) + ".jpg"
                 
-                        #cv2.putText(output_img_path, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
-                        cv2.imwrite(output_img_path, img)
+                #         #cv2.putText(output_img_path, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
+                #         cv2.imwrite(output_img_path, img)
                         
-                        # save the image with all the objects drawn to it
-                        cv2.imwrite(img_cumulative_path, img_cumulative)
+                #         # save the image with all the objects drawn to it
+                #         cv2.imwrite(img_cumulative_path, img_cumulative)
                         
-                        f_html.write("<th>" + '<a><img src="'+ str(output_img_path) +'"></a>' + "</th>")
+                #         f_html.write("<th>" + '<a><img src="'+ str(output_img_path) +'"></a>' + "</th>")
                         #f_html.write("</tr>")
                         #f_html.write('<a><img src="'+ str(output_img_path) +'"></a>')
 
-                # if cnt != 2:
+                #if cnt != 2:
                     
-                #     f_html.write("<tr><th>" + str(ground_truth_img[0].split(".")[-2]) + "</th>")
-                #     f_html.write("<th>" + str(class_name) + "</th>")
-                #     f_html.write("<th>" + str(detection["confidence"]) + "</th>")
-                
-
-                #     #print(cnt)
-                #     font = cv2.FONT_HERSHEY_SIMPLEX
-                #     if ovmax > 0: # if there is intersections between the bounding-boxes
-                #         bbgt = [ int(round(float(x))) for x in gt_match["bbox"].split() ]
-                #         cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
-                #         cv2.rectangle(img_cumulative,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
-                    
-                #         f_html.write("<th>" + "x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1]) + "(blue)"+"</th>")
-                #         f_html.write("<th>" + "w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3]) + "(blue)"+"</th>")
-                        
-                #         cv2.putText(img_cumulative, class_name, (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
-                #         #cv2.putText(img, "Actual annotation/ground-truth", (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
-
-                #     bb = [int(i) for i in bb]
-
-                #     if color == (0,255,0):
-                #         #print("green")
-                #         f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(green)"+"</th>")
-                #         f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(green)"+"</th>")
-
-                #         """set empty to red"""
-                #         f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(red)"+"</th>")
-                #         f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(red)"+"</th>")
-                #         cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
-
-                #     elif color == (30,30,255):
-                #         #print("light_red")
-                #         """set empty to green"""
-                #         f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(green)"+"</th>")
-                #         f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(green)"+"</th>")
-
-                #         f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(red)"+"</th>")
-                #         f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(red)"+"</th>")
-                #         cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
-
-          
-                #     cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
-        
-                #     cv2.rectangle(img_cumulative,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
-                #     cv2.putText(img_cumulative, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
-                    
-                #     # show image
-                #     cv2.imshow("Animation", img)
-                #     cv2.waitKey(20) # show for 20 ms
-                #     # save image to output
-                #     output_img_path = output_files_path + "/images/detections_one_by_one/" + class_name + "_detection" + str(idx) + ".jpg"
+                f_html.write("<tr><th>" + str(ground_truth_img[0].split(".")[-2]) + "</th>")
+                f_html.write("<th>" + str(class_name) + "</th>")
+                f_html.write("<th>" + str(detection["confidence"]) + "</th>")
             
-                #     #cv2.putText(output_img_path, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
-                #     cv2.imwrite(output_img_path, img)
+
+                #print(cnt)
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                if ovmax > 0: # if there is intersections between the bounding-boxes
+                    bbgt = [ int(round(float(x))) for x in gt_match["bbox"].split() ]
+                    cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
+                    cv2.rectangle(img_cumulative,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
+                
+                    f_html.write("<th>" + "x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1]) + "(blue)"+"</th>")
+                    f_html.write("<th>" + "w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3]) + "(blue)"+"</th>")
                     
-                #     # save the image with all the objects drawn to it
-                #     cv2.imwrite(img_cumulative_path, img_cumulative)
+                    cv2.putText(img_cumulative, class_name, (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
+                    #cv2.putText(img, "Actual annotation/ground-truth", (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
+
+                bb = [int(i) for i in bb]
+
+                if color == (0,255,0):
+                    #print("green")
+                    f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(green)"+"</th>")
+                    f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(green)"+"</th>")
+
+                    """set empty to red"""
+                    f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(red)"+"</th>")
+                    f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(red)"+"</th>")
+                    cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
+
+                elif color == (30,30,255):
+                    #print("light_red")
+                    """set empty to green"""
+                    f_html.write("<th>" + "x:" + str("N/A") + " " + "y:" + str("N/A") + "(green)"+"</th>")
+                    f_html.write("<th>" + "w:" + str("N/A") + " " + "h:" + str("N/A") + "(green)"+"</th>")
+
+                    f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(red)"+"</th>")
+                    f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(red)"+"</th>")
+                    cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
+
+        
+                cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
+    
+                cv2.rectangle(img_cumulative,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
+                cv2.putText(img_cumulative, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
+                
+                # show image
+                cv2.imshow("Animation", img)
+                cv2.waitKey(20) # show for 20 ms
+                # save image to output
+                output_img_path = output_files_path + "/images/detections_one_by_one/" + class_name + "_detection" + str(idx) + ".jpg"
+        
+                #cv2.putText(output_img_path, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
+                cv2.imwrite(output_img_path, img)
+                
+                # save the image with all the objects drawn to it
+                cv2.imwrite(img_cumulative_path, img_cumulative)
+                
+                f_html.write("<th>" + '<a><img src="'+ str(output_img_path) +'"></a>' + "</th>")
+                f_html.write("</tr>")
                     
-                #     f_html.write("<th>" + '<a><img src="'+ str(output_img_path) +'"></a>' + "</th>")
-                #     f_html.write("</tr>")
-                #     #f_html.write('<a><img src="'+ str(output_img_path) +'"></a>')
         
         # print(cnt)
         # compute precision/recall
@@ -1213,7 +1213,7 @@ fp_s = fp[1]
 """ 
 Ploting conf-matrix
 """
-category_names = ['True Positives', 'False Positives ', 'False Negatives',]
+category_names = ['True Positives', 'False Positives', 'False Negatives',]
 
 results = {
     # 'road': [tp[0], fp[0], total_road[0]],
@@ -1240,13 +1240,22 @@ def survey(results, category_names):
     data_cum = data.cumsum(axis=1)
     category_colors = plt.get_cmap('RdYlGn')(
         np.linspace(0.15, 0.95, data.shape[1]))
+    
+    #print(category_colors)
 
     fig, ax = plt.subplots(figsize=(9.2, 5))
     ax.invert_yaxis()
     ax.xaxis.set_visible(False)
     ax.set_xlim(0, np.sum(data, axis=1).max())
 
-    for i, (colname, color) in enumerate(zip(category_names, category_colors)):
+    light_blue = (255,200,100)
+    green = (0,255,0)
+    light_red = (30,30,255)
+
+    color2 = ['g', 'c', 'r']
+    print(color2)
+
+    for i, (colname, color) in enumerate(zip(category_names, color2)):
         widths = data[:, i]
         starts = data_cum[:, i] - widths
         ax.barh(labels, widths, left=starts, height=0.5,
@@ -1254,6 +1263,7 @@ def survey(results, category_names):
         xcenters = starts + widths / 2
 
         r, g, b, _ = color
+        print(r,g,b)
         text_color = 'white' if r * g * b < 0.5 else 'darkgrey'
         for y, (x, c) in enumerate(zip(xcenters, widths)):
             ax.text(x, y, str(int(c)), ha='center', va='center',
