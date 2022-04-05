@@ -514,7 +514,7 @@ ap_dictionary = {}
 lamr_dictionary = {}
 # open file to store the output
 
-f_html = open("validation_result.html", "w")
+f_html = open("validation_report.html", "w")
 #f_html.write('<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">')
 
 message2='''
@@ -590,6 +590,59 @@ message='''
 f_html.write(message)
 
 
+message_box_color='''
+<html>
+<head>
+    <style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        }
+
+        td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        }
+
+        tr:nth-child(even) {
+
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Box color defined</h1>
+    <table>
+        <tr>
+            <th>Box color</th>
+            <th>Indicate</th>
+        </tr>
+        <tr>
+            <td><h5><p style="color:blue">Blue</p></h5></td>
+            <td><h5>Ground-truth/Actual-annotation</h5></td>
+        </tr>
+        <tr>
+            <td><h5><p style="color:green">Green</p></h5></td>
+            <td><h5>True Positive</h5></td>
+        </tr>
+        <tr>
+            <td><h5><p style="color:red">Red</p></h45</td>
+            <td><h5>False Positive</h5></td>
+        </tr>
+        <tr>
+            <td><h5><p style="color:magenta">Magenta</p></h5></td>
+            <td><h5>False Negative</h5></td>
+        </tr>
+</table>
+</body>
+ <br>\n
+</html>'''
+
+f_html.write(message_box_color)
+
+
+
 f_html.write("<pre><h1>" + "Images with class name, confidence level " + "</h1></pre> <br>\n")
 
 
@@ -602,32 +655,36 @@ message3='''
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <script src="./filter.js"></script>
+    <script src="filter.js"></script>
     
 </head>
 
 <body>
     <table id="emp-table">
-        <tr>
-            <th>Img No. &nbsp </th>
-            <th>Class name  
+        <thead>
+            <th col-index = 1>Img No. &nbsp </th>
+            <th col-index = 2>Class name  
                 <select class="table-filter" onchange="filter_rows()">
                     <option value="all"></option>
                 </select> &nbsp </th>
-            <th>Confidence level &nbsp </th>
-            <th>Bounding Box (x,y) &nbsp &nbsp </th>
-            <th>Bounding Box (w,h) &nbsp &nbsp </th>
-            <th>Bounding Box (x,y) &nbsp &nbsp </th>
-            <th>Bounding Box (w,h) &nbsp &nbsp </th>
-            <th>Bounding Box (x,y) &nbsp &nbsp </th>
-            <th>Bounding Box (w,h) &nbsp &nbsp </th>
-            <th>Result 
+            <th col-index = 3>Confidence level 
+                <select class="table-filter" onchange="filter_rows()">
+                    <option value="all"></option>
+                </select> &nbsp </th>
+            <th col-index = 4>Bounding Box (x,y) &nbsp &nbsp </th>
+            <th col-index = 5>Bounding Box (w,h) &nbsp &nbsp </th>
+            <th col-index = 6>Bounding Box (x,y) &nbsp &nbsp </th>
+            <th col-index = 7>Bounding Box (w,h) &nbsp &nbsp </th>
+            <th col-index = 8>Bounding Box (x,y) &nbsp &nbsp </th>
+            <th col-index = 9>Bounding Box (w,h) &nbsp &nbsp </th>
+            <th col-index = 10>Result 
                 <select class="table-filter" onchange="filter_rows()">
                     <option value="all"></option>
                 </select>&nbsp &nbsp </th>
-            <th>Image &nbsp &nbsp </th>
+            <th col-index = 11>Image &nbsp &nbsp </th>
     
-        </tr>
+        </thead>
+        <tbody>
 
 '''
 
@@ -750,7 +807,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                 height, widht = img.shape[:2]
                 # colors (OpenCV works with BGR)
                 white = (255,255,255)
-                light_blue = (255,200,100)
+                light_blue = (255,0,0) #255,200,100)
                 #green = (0,255,0)
                 green = (0,128,0)
                 light_red = (30,30,255)
@@ -796,9 +853,10 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                 file_double_name.append(ground_truth_img[0])
 
                     
-                f_html.write("<tr><th>" + str(ground_truth_img[0].split(".")[-2]) + "</th>")
-                f_html.write("<th>" + str(class_name) + "</th>")
-                f_html.write("<th>" + str(detection["confidence"]) + "</th>")
+                f_html.write("<tr><td>"'<h4>' + str(ground_truth_img[0].split(".")[-2]) + '</h4>'"</td>")
+                #f_html.write("<td>" + str(class_name) + "</td>")
+                f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
+                f_html.write("<td>"'<h4>'+ str(detection["confidence"]) +'</h4>'"</td>")
             
 
                 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -810,8 +868,8 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                     #f_html.write("<th>" + "x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1]) + "(blue)"+"</th>")
                     #f_html.write("<th>" + "w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3]) + "(blue)"+"</th>")
 
-                    f_html.write("<th>" + '<p style="color:blue;">'+"x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1])+'</p>' +"</th>")
-                    f_html.write("<th>" + '<p style="color:blue;">'+"w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3])+'</p>' +"</th>")
+                    f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1])+'</p></h4>' +"</td>")
+                    f_html.write("<td>" + '<h4><p style="color:blue;">'+"w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3])+'</p></h4>' +"</td>")
                     
                     cv2.putText(img_cumulative, class_name, (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
                     #cv2.putText(img, "Actual annotation/ground-truth", (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
@@ -823,34 +881,38 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                     #f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(green)"+"</th>")
                     #f_html.write("<th>" + "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(green)"+"</th>")
 
-                    f_html.write("<th>" + '<p style="color:green;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p>' +"</th>")
-                    f_html.write("<th>" + '<p style="color:green;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p>' +"</th>")
+                    f_html.write("<td>" + '<h4><p style="color:green;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>' +"</td>")
+                    f_html.write("<td>" + '<h4><p style="color:green;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
 
                     """set empty to red"""
                
-                    f_html.write("<th>" + '<p style="color:red;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p>' +"</th>")
-                    f_html.write("<th>" + '<p style="color:red;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p>' +"</th>")
+                    f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>' +"</td>")
+                    f_html.write("<td>" + '<h4><p style="color:red;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
 
                     cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
                
-                    f_html.write("<th>" + '<p style="color:green;">True Positive</p>' + "</td>")
+                    #f_html.write("<th>" + '<p style="color:green;">True Positive</p>' + "</th>")
+                    #f_html.write("<td>" + str("True Positive") + "</td>")
+                    f_html.write("<td>"'<h4>True Positive</h4>'"</td>")
 
                 elif color == (30,30,255):
                     #print("light_red")
                     """set empty to green"""
 
-                    f_html.write("<th>" + '<p style="color:green;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p>' +"</th>")
-                    f_html.write("<th>" + '<p style="color:green;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p>' +"</th>")
+                    f_html.write("<td>" + '<h4><p style="color:green;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>' +"</td>")
+                    f_html.write("<td>" + '<h4><p style="color:green;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
 
                     #f_html.write("<th>" + "x:" + str(bb[0]) + " " + "y:" + str(bb[1]) + "(red)"+"</th>")
                     #f_html.write("<th>"+ "w:" + str(bb[2]) + " " + "h:" + str(bb[3]) + "(red)"+"</th>")
 
-                    f_html.write("<th>" + '<p style="color:red;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p>' +"</th>")
-                    f_html.write("<th>" + '<p style="color:red;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p>' +"</th>")
+                    f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>' +"</td>")
+                    f_html.write("<td>" + '<h4><p style="color:red;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
 
                     cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
 
-                    f_html.write("<th>" + '<p style="color:red;">False Positive</p>' + "</td>")
+                    #f_html.write("<td>" + '<p style="color:red;">False Positive</p>' + "</td>")
+                    #f_html.write("<td>" + str("False Positive") + "</td>")
+                    f_html.write("<td>"'<h4>False Positive</h4>'"</td>")
         
                 cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
     
@@ -868,7 +930,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                 # save the image with all the objects drawn to it
                 cv2.imwrite(img_cumulative_path, img_cumulative)
                 
-                f_html.write("<th>" + '<a><img src="'+ str(output_img_path) +'"></a>' + "</th>")
+                f_html.write("<td>" + '<a><img src="'+ str(output_img_path) +'"></a>' + "</td>")
                 f_html.write("</tr>")
                     
         
@@ -948,7 +1010,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
     text = "mAP = {0:.2f}%".format(mAP*100)
     output_file.write(text + "\n")
     #print(text)
-    f_html.write("</tr>")
+    #f_html.write("</tr>")
 
 
 """
@@ -967,6 +1029,7 @@ if show_animation:
         img_id = tmp_file[tmp_file.find(start)+len(start):tmp_file.rfind('_ground_truth.json')]
         img_cumulative_path = output_files_path + "/images/" + img_id + ".jpg"
         img = cv2.imread(img_cumulative_path)
+   
         if img is None:
             img_path = IMG_PATH + '/' + img_id + ".jpg"
             img = cv2.imread(img_path)
@@ -974,39 +1037,47 @@ if show_animation:
         for obj in ground_truth_data:
             #print(obj)
             if not obj['used']:
+
+                #img_cumulative_path.split("/")[-1].split(".")[-2])
                 bbgt = [ int(round(float(x))) for x in obj["bbox"].split() ]
                 cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),purple,2)
                 
-                f_html.write("<tr><th>" + str(ground_truth_img[0].split(".")[-2]) + "</th>")
-                f_html.write("<th>" + str(obj["class_name"]) + "</th>")
-                f_html.write("<th>" + str("N/A") + "</th>")
+                
+                f_html.write("<tr><td>"'<h4>' + str(img_cumulative_path.split("/")[-1].split(".")[-2]) + '</h4>'"</td>")
+
+                class_name_font = str(obj["class_name"])
+                f_html.write("<td>"'<h4>'+ class_name_font +'</h4>'"</td>")
+                #f_html.write("<td>" + str("N/A") + "</td>")
+                f_html.write("<td>"'<h4>N/A</h4>'"</td>")
 
                 #pink color
-                f_html.write("<th>" + '<p style="color:purple;">'+"x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1])+'</p>' +"</th>")
-                f_html.write("<th>" + '<p style="color:purple;">'+"w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3])+'</p>' +"</th>")
+                f_html.write("<td>" + '<h4><p style="color:purple;">'+"x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1])+'</p></h4>' +"</td>")
+                f_html.write("<td>" + '<h4><p style="color:purple;">'+"w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3])+'</p></h4>' +"</td>")
                 
                 #green color
-                f_html.write("<th>" + '<p style="color:green;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p>' +"</th>")
-                f_html.write("<th>" + '<p style="color:green;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p>' +"</th>")
+                f_html.write("<td>" + '<h4><p style="color:green;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>' +"</tdth>")
+                f_html.write("<td>" + '<h4><p style="color:green;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
 
                 #red color
-                f_html.write("<th>" + '<p style="color:red;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p>' +"</th>")
-                f_html.write("<th>" + '<p style="color:red;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p>' +"</th>")
+                f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>' +"</td>")
+                f_html.write("<td>" + '<h4><p style="color:red;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
 
 
-                #f_html.write("<th>" + str("False Negative") +"</th>")
                 ftt = str("False Negative")
-                f_html.write("<th>" + '<p style="color:purple;">'+ ftt +'</p>' + "</td>")
+                #f_html.write("<td>" + '<p style="color:purple;">'+ ftt +'</p>' + "</td>")
+                f_html.write("<td>"'<h4>False Negative</h4>'"</td>")
 
                 cv2.putText(img, "False Negative", (bbgt[0],bbgt[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
 
-                f_html.write("<th>" + '<a><img src="'+ str(img_cumulative_path) +'"></a>' + "</th>")
-                
+                f_html.write("<td>" + '<a><img src="'+ str(img_cumulative_path) +'"></a>' + "</td>")
+                f_html.write("</tr>")
         cv2.imwrite(img_cumulative_path, img)
 
+f_html.write("</tbody>")
 f_html.write("</table>")
-#f_html.write("</section>")
 #f_html.write("<script  src="' function.js '"></script>")
+f_html.write("<script>"' window.onload = () => {console.log(document.querySelector("#emp-table > tbody > tr:nth-child(1) > td:nth-child(2) ").innerHTML);}; getUniqueValuesFromColumn() '"</script>")
+
 f_html.write("</body></html>")
 
 # remove the temp_files directory
@@ -1287,8 +1358,8 @@ file = open(file_path,"w")
 file.write("Precision:" + '%.2f' % (ac * 100) + "%")
 file.close()
 
-message = "<pre><h1>" + "Accuracy" + "</h1></pre> <br>\n"
-f_html.write(message)
-message = "<pre><h1>" + "Precision:" + '%.2f' % (ac * 100) + "%" + "</h1></pre> <br>\n"
+# message = "<pre><h1>" + "Accuracy" + "</h1></pre> <br>\n"
+# f_html.write(message)
+message = "<pre><h1>" + "Accuracy:" + '%.2f' % (ac * 100) + "%" + "</h1></pre> <br>\n"
 f_html.write(message)
 f_html.write("</body></html>")
