@@ -1,5 +1,7 @@
 # Calculate mAP for custom model
 
+## mAP(Mean Average Precision)
+
 ## Different type of bounding box format
 
 The bounding box has the following (x, y) coordinates of its corners: top-left is (x_min, y_min), top-right is (x_max, y_min), bottom-left is (x_min, y_max), bottom-right is (x_max, y_max). As you see, coordinates of the bounding box's corners are calculated with respect to the top-left corner of the image.
