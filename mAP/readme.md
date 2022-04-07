@@ -2,6 +2,16 @@
 
 ## mAP(Mean Average Precision)
 
+### Intersection Over Union (IOU)
+
+Intersection Over Union (IOU) is a measure based on Jaccard Index that evaluates the overlap between two bounding boxes. It requires a ground truth bounding box and a predicted bounding box. By applying the IOU we can tell if detection is valid (True Positive) or not (False Positive).
+
+IOU is given by the overlapping area between the predicted bounding box and the ground truth bounding box divided by the area of union between them:  
+
+ 
+
+The image below illustrates the IOU between a ground truth bounding box (in green) and a detected bounding box (in red).
+
 ## Different type of bounding box format
 
 The bounding box has the following (x, y) coordinates of its corners: top-left is (x_min, y_min), top-right is (x_max, y_min), bottom-left is (x_min, y_max), bottom-right is (x_max, y_max). As you see, coordinates of the bounding box's corners are calculated with respect to the top-left corner of the image.
