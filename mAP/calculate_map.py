@@ -236,8 +236,10 @@ def adjust_axes(r, t, fig, axes):
 def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, output_path, to_show, plot_color, true_p_bar):
     # sort the dictionary by decreasing value, into a list of tuples
     sorted_dic_by_value = sorted(dictionary.items(), key=operator.itemgetter(1))
+    
     # unpacking the list of tuples into two lists
     sorted_keys, sorted_values = zip(*sorted_dic_by_value)
+    #print(sorted_values)
     # 
     if true_p_bar != "":
         """
@@ -248,14 +250,16 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
         """
         fp_sorted = []
         tp_sorted = []
+        fn_sorted = [30, 33]
+        
         for key in sorted_keys:
             fp_sorted.append(dictionary[key] - true_p_bar[key])
             #fn_sorted.append(dictionary[key] - true_p_bar[key])
             tp_sorted.append(true_p_bar[key])
-        
-        plt.barh(range(n_classes), fp_sorted, align='edge', color='crimson', label='False Positive')
-        plt.barh(range(n_classes), tp_sorted, align='edge', color='forestgreen', label='True Positive', left=fp_sorted)
-        #plt.barh(range(n_classes), 10, align='center', color='orange', label='fn')
+        fp_sorted = [2,3]
+        plt.barh(range(n_classes), fp_sorted, color='crimson', label='False Positive')
+        plt.barh(range(n_classes), tp_sorted, color='forestgreen', label='True Positive')
+        plt.barh(range(n_classes), fn_sorted, color='orange', label='False Negative')
         #plt.barh(range(n_classes), tp_sorted, align='center', color='pink', label='False Negatives', left=fp_sorted)
         #plt.barh(range(n_classes), 10, align='center', color='pink', label='False Negatives')
         #print("False positives" + ":" + str(true_p_bar))
@@ -270,12 +274,16 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
         for i, val in enumerate(sorted_values):
             fp_val = fp_sorted[i]
             tp_val = tp_sorted[i]
+            fn_val = fn_sorted[i]
+
             fp_str_val = " " + str(fp_val)
             tp_str_val = fp_str_val + " " + str(tp_val)
+            fn_str_val = " " + str(fn_val)
             # trick to paint multicolor with offset:
             # first paint everything and then repaint the first number
             t = plt.text(val, i, tp_str_val, color='forestgreen', va='center', fontweight='bold')
             plt.text(val, i, fp_str_val, color='crimson', va='center', fontweight='bold')
+            
             if i == (len(sorted_values)-1): # largest bar
                 adjust_axes(r, t, fig, axes)
     else:
@@ -352,7 +360,12 @@ if show_animation:
      Load each of the ground-truth files into a temporary ".json" file.
      Create a list of all the class names present in the ground-truth (gt_classes).
 """
+# get a list with the ground-truth files
 
+# ground_truth_files_list = glob.glob(GT_PATH + '/*.txt')
+# if len(ground_truth_files_list) == 0:
+#     error("Error: No ground-truth files found!")
+# ground_truth_files_list.sort()
 
 
 ground_truth_files_list = glob.glob(GT_PATH2 + '/*.txt')
@@ -751,11 +764,6 @@ message3='''
 f_html.write(message3)
 cnt=0
 
-f = open("Nothing.txt", "a")
-f.write(str(0))
-f.write('\n')
-f.close()
-
 file_double_name = []
 file_double_name.append(0)
 dict_info = {}
@@ -766,10 +774,13 @@ blue_flag=0
 with open(output_files_path + "/output.txt", 'w') as output_file:
     output_file.write("# AP and precision/recall per class\n")
     count_true_positives = {}
+
+    count_new_true_positives = {}
     # file_double_name = []
     # file_double_name.append(0)
     for class_index, class_name in enumerate(gt_classes):
         count_true_positives[class_name] = 0
+        count_new_true_positives[class_name] = 0
         """
          Load detection-results of that class
         """
@@ -848,6 +859,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                             tp[idx] = 1
                             gt_match["used"] = True
                             count_true_positives[class_name] += 1
+                            
                             # update the ".json" file
                             with open(gt_file, 'w') as f:
                                     f.write(json.dumps(ground_truth_data))
@@ -917,13 +929,31 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
                 file_double_name.append(ground_truth_img[0])
 
+                # if ground_truth_img[0]=="62.jpg":
+                #     print(ovmax)
+                
+                # if ovmax < 0:
+                #     break
+
+                # f_html.write("<tr><td>"'<h4>' + str(ground_truth_img[0].split(".")[-2]) + '</h4>'"</td>")
+                # f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
+                # f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
+                # f_html.write("<td>"'<h4>'+ str(detection["confidence"]) +'</h4>'"</td>")
+
 
                 font = cv2.FONT_HERSHEY_SIMPLEX
+                if  ovmax <0:
+                    #print(ground_truth_img[0].split(".")[-2])
+                    tp[idx] = 1
+                    count_new_true_positives[class_name] += 1
+                # if ovmax < 0: # if there is intersections between the bounding-boxes
 
+                #     f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>')
+                #     f_html.write('<h4><p style="color:blue;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
                  
-                if ground_truth_img[0]=="4.jpg":
-                    if (ground_truth_data[0]["class_name"] == class_name):
-                        print(ovmax)
+                # if ground_truth_img[0]=="4.jpg":
+                #     if (ground_truth_data[0]["class_name"] == class_name):
+                #         print(ovmax)
                 if ovmax > 0: # if there is intersections between the bounding-boxes
                     f_html.write("<tr><td>"'<h4>' + str(ground_truth_img[0].split(".")[-2]) + '</h4>'"</td>")
                     f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
@@ -936,6 +966,8 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                     cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
                     cv2.rectangle(img_cumulative,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
        
+                    #f_html.write("<th>" + "x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1]) + "(blue)"+"</th>")
+                    #f_html.write("<th>" + "w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3]) + "(blue)"+"</th>")
 
                     f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1])+'</p></h4>')
                     f_html.write('<h4><p style="color:blue;">'+"w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3])+'</p></h4>' +"</td>")
@@ -954,13 +986,19 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                             f_html.write('<h4><p style="color:green;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
 
                             """set empty to red"""
-             
+                    
+                            # f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>' +"</td>")
+                            # f_html.write("<td>" + '<h4><p style="color:red;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
                             
                             cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
                     
-               
+                            #f_html.write("<th>" + '<p style="color:green;">True Positive</p>' + "</th>")
+                            #f_html.write("<td>" + str("True Positive") + "</td>")
                             f_html.write("<td>"'<h4>True Positive</h4>'"</td>")
                             cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),green,2)
+
+                            tp[idx] = 1
+                            count_new_true_positives[class_name] += 1
 
                         else:
 
@@ -969,9 +1007,11 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
                             cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
 
-                
+                            #f_html.write("<td>" + '<p style="color:red;">False Positive</p>' + "</td>")
+                            #f_html.write("<td>" + str("False Positive") + "</td>")
                             f_html.write("<td>"'<h4>False Positive</h4>'"</td>")
                             cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),light_red,2)
+                            fp[idx] = 1
             
                     #cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
         
@@ -1072,10 +1112,18 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
     #f_html.write("</tr>")
 
 
+#print(count_new_true_positives)
+
 """
  Draw false negatives
 """
+count_new_false_negative = {}
 
+name_of_classes = "scripts/extra/classes.txt"
+lines = file_lines_to_list(name_of_classes)
+for line in range(0, len(lines)):
+    #print(lines[line])
+    count_new_false_negative[lines[line]] = 0
 
 if show_animation:
     #pink = (203,192,255)
@@ -1098,14 +1146,16 @@ if show_animation:
             #print(obj)
             if not obj['used']:
 
-             
+                #count_new_false_negative[obj["class_name"]] = 0
+
+                #img_cumulative_path.split("/")[-1].split(".")[-2])
                 bbgt = [ int(round(float(x))) for x in obj["bbox"].split() ]
                 cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),purple,2)
                 
                 
                 f_html.write("<tr><td>"'<h4>' + str(img_cumulative_path.split("/")[-1].split(".")[-2]) + '</h4>'"</td>")
 
-
+                #check image name and check the detected result and find class name
 
                 file_id_txt = img_cumulative_path.split("/")[-1].split(".")[-2]
                 temp_path = os.path.join(DR_PATH, (file_id_txt + ".txt"))
@@ -1145,6 +1195,7 @@ if show_animation:
 
 
                 f_html.write("<td>"'<h4>False Negative</h4>'"</td>")
+                count_new_false_negative[str(obj["class_name"])] += 1
 
                 cv2.putText(img, "False Negative", (bbgt[0],bbgt[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
 
@@ -1162,6 +1213,8 @@ f_html.write("</body></html>")
 
 # remove the temp_files directory
 shutil.rmtree(TEMP_FILES_PATH)
+
+#print(count_new_false_negative)
 
 """
  Count total of detection-results
@@ -1185,7 +1238,7 @@ for txt_file in dr_files_list:
 #print(det_counter_per_class)
 dr_classes = list(det_counter_per_class.keys())
 
-
+#print(det_counter_per_class)
 """
  Plot the total number of occurences of each class in the ground-truth
 """
@@ -1230,7 +1283,18 @@ for key, value in gt_counter_per_class.items():
         elif key == "sidewalk":
             total_sidewalk.append(value)
 
+#print(total_objects)
 
+total_fn_road = []
+total_fn_sidewalk = []
+
+for key, value in count_new_false_negative.items():    
+    if key == "road":
+        total_fn_road.append(value)
+    elif key == "sidewalk":
+        total_fn_sidewalk.append(value)
+
+#print(total_fn_road, total_fn_sidewalk)
 """
  Write number of ground-truth objects per class to results.txt
 """
@@ -1248,6 +1312,9 @@ for class_name in dr_classes:
     if class_name not in gt_classes:
         count_true_positives[class_name] = 0
 
+# print(count_true_positives)
+# print(count_new_true_positives)
+
 
 """
  Plot the total number of occurences of each class in the "detection-results" folder
@@ -1261,14 +1328,14 @@ if draw_plot:
     plot_title += str(count_non_zero_values_in_dictionary) + " detected classes)"
     # end Plot title
     x_label = "Number of objects per class"
-    output_path = output_files_path + "/detection-results-info.png"
+    output_path2 = "d.png"
     #message = "<pre><h1>" + "No. of object per class" + "</h1></pre> <br>\n"
     #f_html.write(message)
     #f_html.write('<a><img src="'+ str(output_path) +'"></a>')
     #f_html.write("</body></html>")
     to_show = False
     plot_color = 'forestgreen'
-    true_p_bar = count_true_positives
+    true_p_bar = count_new_true_positives #count_true_positives
     #print(true_p_bar)
     draw_plot_func(
         det_counter_per_class,
@@ -1276,7 +1343,7 @@ if draw_plot:
         window_title,
         plot_title,
         x_label,
-        output_path,
+        output_path2,
         to_show,
         plot_color,
         true_p_bar
@@ -1286,22 +1353,74 @@ if draw_plot:
  Write number of detected objects per class to output.txt
 """
 
-tp = []
-fp = []
+# tp = []
+# fp = []
+
+# with open(output_files_path + "/output.txt", 'a') as output_file:
+#     output_file.write("\n# Number of detected objects per class\n")
+#     for class_name in sorted(dr_classes):
+#         n_det = det_counter_per_class[class_name]
+#         text = class_name + ": " + str(n_det)
+#         text += " (tp:" + str(count_true_positives[class_name]) + ""
+#         text += ", fp:" + str(n_det - count_true_positives[class_name]) + ")\n"
+
+#         tp2 = str(count_true_positives[class_name])
+#         fp2 = str(n_det - count_true_positives[class_name])
+#         tp.append(tp2)
+#         fp.append(fp2)
+#         output_file.write(text)
+
+#print(tp,fp)
+""""
+Check the updated one which doesnot have false positive
+"""
+tp2 = []
+fp2 = []
+
+new_graph = {}
+
+def append_value(dict_obj, key, value):
+    # Check if key exist in dict or not
+    if key in dict_obj:
+        # Key exist in dict.
+        # Check if type of value of key is list or not
+        if not isinstance(dict_obj[key], list):
+            # If type is not list then make it list
+            dict_obj[key] = [dict_obj[key]]
+        # Append the value in list
+        dict_obj[key].append(value)
+    else:
+        # As key is not in dict,
+        # so, add key-value pair
+        dict_obj[key] = value
+
 with open(output_files_path + "/output.txt", 'a') as output_file:
     output_file.write("\n# Number of detected objects per class\n")
     for class_name in sorted(dr_classes):
         n_det = det_counter_per_class[class_name]
         text = class_name + ": " + str(n_det)
-        text += " (tp:" + str(count_true_positives[class_name]) + ""
-        text += ", fp:" + str(n_det - count_true_positives[class_name]) + ")\n"
+        text += " (tp:" + str(count_new_true_positives[class_name]) + ""
+        text += ", fp:" + str(n_det - count_new_true_positives[class_name]) + ")\n"
 
-        tp2 = str(count_true_positives[class_name])
-        fp2 = str(n_det - count_true_positives[class_name])
-        tp.append(tp2)
-        fp.append(fp2)
+        tp3 = str(count_new_true_positives[class_name])
+        fp3 = str(n_det - count_new_true_positives[class_name])
+        fn3 = str(count_new_false_negative[class_name])
+        tp2.append(tp3)
+        fp2.append(fp3)
         output_file.write(text)
+        append_value(new_graph, class_name, int(tp3))
+        append_value(new_graph, class_name, int(fp3))
+        # if class_name == "road":
+        #     append_value(new_graph,class_name,2)
+        # else:
+        #     append_value(new_graph,class_name,0)
 
+        append_value(new_graph, class_name, int(fn3))
+
+#print(tp2,fp2)
+#print(count_new_true_positives)
+#print("New graph")
+#print(new_graph)
 
 """
  Draw log-average miss rate plot (Show lamr of all classes in decreasing order)
@@ -1367,27 +1486,73 @@ for filename in os.listdir(pr_directory):
     f_html.write('<a><img src="'+ f  +'"></a>')
 
 
-tp_r = tp[0]
-tp_s = tp[1]
-fp_r = fp[0]
-fp_s = fp[1]
+tp_r = tp2[0]
+tp_s = tp2[1]
+fp_r = fp2[0]
+fp_s = fp2[1]
+
+fp_n_r = total_fn_road[0]
+fp_n_s = total_fn_sidewalk[0]
 
 #print(tp, fp)
 
 """ 
 Ploting conf-matrix
 """
-category_names = ['True Positives', 'False Positives', 'False Negatives',]
 
-results = {
- 
-    'road': [int(tp_r), int(fp_r), int(total_road[0] - int(tp_r))],
-    'sidewalk': [int(tp_s), int(fp_s), int(total_sidewalk[0] - int(tp_s))]
+#print(fp_r, fp_s)
+
+results = {}
+category_names = []
+
+def category_select():
+    if fp_r == str(0) and fp_s == str(0):
+
+        category_names = ['True Positives', 'False Negatives']
+
+        results = {
+        
+            'road': [int(tp_r),  int(fp_n_r)],
+            'sidewalk': [int(tp_s), int(fp_n_s)]
+            
+        }
     
-}
+    elif fp_r == str(0):
+
+        category_names = ['True Positives', 'False Positives', 'False Negatives']
+
+        results = {
+        
+            'road': [int(tp_r), 0, int(fp_n_r)],
+            'sidewalk': [int(tp_s), int(fp_s), int(fp_n_s)]
+            
+        }
+    elif fp_s == str(0):
+
+        category_names = ['True Positives', 'False Positives', 'False Negatives']
+
+        results = {
+        
+            'road': [int(tp_r), int(fp_r), int(fp_n_r)],
+            'sidewalk': [int(tp_s), 0, int(fp_n_s)]
+            
+        }
+
+    return results, category_names
 
 
-def survey(results, category_names):
+
+
+# results2 = {}
+
+# lines = file_lines_to_list(name_of_classes)
+# for i in range(0, len(lines)):
+#     values2 = [tp_r, fp_r]
+#     for key, value in count_new_false_negative.items():
+#         results2[lines[i]].append(value)
+
+# print(results2)
+def make_metric_graph(results, category_names):
     """
     Parameters
     ----------
@@ -1400,6 +1565,7 @@ def survey(results, category_names):
     """
     labels = list(results.keys())
     data = np.array(list(results.values()))
+    #print(data)
     data_cum = data.cumsum(axis=1)
     category_colors = plt.get_cmap('RdYlGn')(
         np.linspace(0.15, 0.95, data.shape[1]))
@@ -1430,8 +1596,51 @@ def survey(results, category_names):
 
     return fig, ax
 
+results_category = category_select()
+#make_metric_graph(new_graph, category_names)
+#make_metric_graph(results_category[0], results_category[1])
 
-survey(results, category_names)
+
+
+
+"""
+Loop through the category_list
+"""
+
+print(new_graph)
+check_false_positive_cnt = 0
+
+
+
+for key,value in new_graph.items():
+
+    if value[1] == 0:
+        check_false_positive_cnt += 1
+        
+    # elif value[1] == 0:
+    #     check_false_positive_cnt += 1
+
+print(check_false_positive_cnt)
+
+dict2 = {}
+for key,value in new_graph.items():
+
+    if check_false_positive_cnt == 2:
+        append_value(dict2, key, value[0])
+        append_value(dict2, key, value[2])
+        category_names = ['True Positives', 'False Negatives']
+        make_metric_graph(dict2, category_names)
+
+    elif check_false_positive_cnt != 2:
+        append_value(dict2, key, value[0])
+        append_value(dict2, key, value[1])
+        append_value(dict2, key, value[2])
+        category_names = ['True Positives', 'False Positives', 'False Negatives']
+        make_metric_graph(dict2, category_names)
+
+
+
+
 plt.savefig("output" + "/detection_results.jpg")
 #plt.show()
 
@@ -1442,20 +1651,27 @@ f_html.write("</body></html>")
 
 
 
-
 """ Accuracy """
-tp = int(tp[0]) + int(tp[1])
-ac = tp / total_objects
-#print(ac * 100)
+# tp = int(tp2[0]) + int(tp2[1])
+# ac = tp / total_objects
+# #print(ac * 100)
 
 
-file_path = "output/" + "ac.txt"
-file = open(file_path,"w")
-file.write("Precision:" + '%.2f' % (ac * 100) + "%")
-file.close()
+# file_path = "output/" + "ac.txt"
+# file = open(file_path,"w")
+# file.write("Precision:" + '%.2f' % (ac * 100) + "%")
+# file.close()
 
-# message = "<pre><h1>" + "Accuracy" + "</h1></pre> <br>\n"
+# message = "<pre><h1>" + "Accuracy:" + '%.2f' % (ac * 100) + "%" + "</h1></pre> <br>\n"
 # f_html.write(message)
-message = "<pre><h1>" + "Accuracy:" + '%.2f' % (ac * 100) + "%" + "</h1></pre> <br>\n"
-f_html.write(message)
+# f_html.write("</body></html>")
+
+total_tp = 0
+for key, value in new_graph.items():
+    total_tp += value[0]
+
+ac2 = total_tp / total_objects
+
+message_new = "<pre><h1>" + "Accuracy:" + '%.2f' % (ac2 * 100) + "%" + "</h1></pre> <br>\n"
+f_html.write(message_new)
 f_html.write("</body></html>")
