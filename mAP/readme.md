@@ -13,12 +13,14 @@ IOU is given by the overlapping area between the predicted bounding box and the 
 The image below illustrates the IOU between a ground truth bounding box (in green) and a detected bounding box (in red).
 
 
-Precision & recall
+### Precision & recall
+
 Precision measures how accurate are your predictions. i.e. the percentage of your predictions are correct.
 
 Recall measures how well you find all the positives. For example, we can find 80% of the possible positive cases in our top K predictions.
 
 True Positive, False Positive, False Negative, and True Negative
+
 Some basic concepts used by the metrics:
 
     True Positive (TP): A correct detection. Detection with IOU ≥ threshold
