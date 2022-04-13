@@ -12,6 +12,23 @@ IOU is given by the overlapping area between the predicted bounding box and the 
 
 The image below illustrates the IOU between a ground truth bounding box (in green) and a detected bounding box (in red).
 
+
+Precision & recall
+Precision measures how accurate are your predictions. i.e. the percentage of your predictions are correct.
+
+Recall measures how well you find all the positives. For example, we can find 80% of the possible positive cases in our top K predictions.
+
+True Positive, False Positive, False Negative, and True Negative
+Some basic concepts used by the metrics:
+
+    True Positive (TP): A correct detection. Detection with IOU ≥ threshold
+
+    False Positive (FP): A wrong detection. Detection with IOU < threshold
+
+    False Negative (FN): A ground truth not detected
+
+    True Negative (TN): Does not apply. It would represent a corrected misdetection. In the object detection task, there are many possible bounding boxes that should not be detected within an image. Thus, TN would be all possible bounding boxes that were correctly not detected (so many possible boxes within an image). That's why it is not used by the metrics.
+
 ## Different type of bounding box format
 
 The bounding box has the following (x, y) coordinates of its corners: top-left is (x_min, y_min), top-right is (x_max, y_min), bottom-left is (x_min, y_max), bottom-right is (x_max, y_max). As you see, coordinates of the bounding box's corners are calculated with respect to the top-left corner of the image.
