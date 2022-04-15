@@ -10,7 +10,7 @@ import datetime
 from flask import flash
 import numpy as np
 
-MINOVERLAP = 0.25 # default value (defined in the PASCAL VOC2012 challenge)
+MINOVERLAP = 0.3 # default value (defined in the PASCAL VOC2012 challenge)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-na', '--no-animation', help="no animation is shown.", action="store_true")
@@ -1543,15 +1543,6 @@ def category_select():
 
 
 
-# results2 = {}
-
-# lines = file_lines_to_list(name_of_classes)
-# for i in range(0, len(lines)):
-#     values2 = [tp_r, fp_r]
-#     for key, value in count_new_false_negative.items():
-#         results2[lines[i]].append(value)
-
-# print(results2)
 def make_metric_graph(results, category_names):
     """
     Parameters
