@@ -522,7 +522,7 @@ ap_dictionary = {}
 lamr_dictionary = {}
 # open file to store the output
 
-f_html = open("validation_report.html", "w")
+f_html = open("validation_report_nw.html", "w")
 #f_html.write('<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">')
 
 message2='''
@@ -540,7 +540,7 @@ f_html.write("<pre><h3>" + str(datetime.datetime.now()) + "</h3></pre> <br>\n")
 f_html.write("<pre><h1>" + "Author" + "</h1></pre>\n")
 f_html.write("<pre><h3>" + str("Limon") + "</h3></pre> <br>\n")
 f_html.write("<pre><h1>" + "model_version" + "</h1></pre>\n")
-f_html.write("<pre><h3>" + str("road_sidewalk_0.0.2") + "</h3></pre> <br>\n")
+f_html.write("<pre><h3>" + str("road_sidewalk_0.0.3") + "</h3></pre> <br>\n")
 f_html.write("<pre><h1>" + "Dataset Path" + "</h1></pre>\n")
 f_html.write("<pre><h3>" '<a href="https://www.dropbox.com/sh/o7lq8nw2unfm3sv/AACJqRKh900c8nO87eBmxbhwa?dl=0">Dataset</a></p>' "</h3></pre> <br>\n")
 
@@ -1425,28 +1425,28 @@ with open(output_files_path + "/output.txt", 'a') as output_file:
 """
  Draw log-average miss rate plot (Show lamr of all classes in decreasing order)
 """
-if draw_plot:
-    window_title = "lamr"
-    plot_title = "log-average miss rate"
-    x_label = "log-average miss rate"
-    output_path = output_files_path + "/lamr.png"
-    message = "<pre><h1>" + "Low average miss rate" + "</h1></pre> <br>\n"
-    f_html.write(message)
-    f_html.write('<a><img src="'+ str(output_path) +'"></a>')
-    f_html.write("</body></html>")
-    to_show = False
-    plot_color = 'royalblue'
-    draw_plot_func(
-        lamr_dictionary,
-        n_classes,
-        window_title,
-        plot_title,
-        x_label,
-        output_path,
-        to_show,
-        plot_color,
-        ""
-        )
+# if draw_plot:
+#     window_title = "lamr"
+#     plot_title = "log-average miss rate"
+#     x_label = "log-average miss rate"
+#     output_path = output_files_path + "/lamr.png"
+#     message = "<pre><h1>" + "Low average miss rate" + "</h1></pre> <br>\n"
+#     f_html.write(message)
+#     f_html.write('<a><img src="'+ str(output_path) +'"></a>')
+#     f_html.write("</body></html>")
+#     to_show = False
+#     plot_color = 'royalblue'
+#     draw_plot_func(
+#         lamr_dictionary,
+#         n_classes,
+#         window_title,
+#         plot_title,
+#         x_label,
+#         output_path,
+#         to_show,
+#         plot_color,
+#         ""
+#         )
 
 """
  Draw mAP plot (Show AP's of all classes in decreasing order)
@@ -1658,7 +1658,7 @@ for key,value in new_graph.items():
     # elif value[1] == 0:
     #     check_false_positive_cnt += 1
 
-print(check_false_positive_cnt)
+#print(check_false_positive_cnt)
 
 dict2 = {}
 for key,value in new_graph.items():
@@ -1708,6 +1708,8 @@ total_tp = 0
 for key, value in new_graph.items():
     total_tp += value[0]
 
+# print("Total object")
+# print(total_objects)
 ac2 = total_tp / total_objects
 
 message_new = "<pre><h1>" + "Accuracy:" + '%.2f' % (ac2 * 100) + "%" + "</h1></pre> <br>\n"
