@@ -35,11 +35,11 @@ if args.set_class_iou is not None:
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
-GT_PATH2 = os.path.join(os.getcwd(), 'road_sidewalk224', 'actual')
-GT_PATH = os.path.join(os.getcwd(), 'road_sidewalk224', 'ground-truth')
-DR_PATH = os.path.join(os.getcwd(), 'road_sidewalk224', 'detection-results')
+GT_PATH2 = os.path.join(os.getcwd(), 'helmet_224x224', 'actual')
+GT_PATH = os.path.join(os.getcwd(), 'helmet_224x224', 'ground-truth')
+DR_PATH = os.path.join(os.getcwd(), 'helmet_224x224', 'detection-results')
 # if there are no images then no animation can be shown
-IMG_PATH = os.path.join(os.getcwd(), 'road_sidewalk224', 'images')
+IMG_PATH = os.path.join(os.getcwd(), 'helmet_224x224', 'images')
 if os.path.exists(IMG_PATH): 
     for dirpath, dirnames, files in os.walk(IMG_PATH):
         if not files:
@@ -522,7 +522,7 @@ ap_dictionary = {}
 lamr_dictionary = {}
 # open file to store the output
 
-f_html = open("validation_report_nw.html", "w")
+f_html = open("validation_report_helmet.html", "w")
 #f_html.write('<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">')
 
 message2='''
@@ -1491,6 +1491,7 @@ tp_s = tp2[1]
 fp_r = fp2[0]
 fp_s = fp2[1]
 
+print(total_fn_road)
 fp_n_r = total_fn_road[0]
 fp_n_s = total_fn_sidewalk[0]
 
