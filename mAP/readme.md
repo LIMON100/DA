@@ -36,6 +36,7 @@ Some basic concepts used by the metrics:
 
 Another way to compare the performance of object detectors is to calculate the area under the curve (AUC) of the Precision x Recall curve. As AP curves are often zigzag curves going up and down, comparing different curves (different detectors) in the same plot usually is not an easy task - because the curves tend to cross each other much frequently. That's why Average Precision (AP), a numerical metric, can also help us compare different detectors. In practice AP is the precision averaged across all recall values between 0 and 1.
 
+
 There are 7 images with 15 ground-truth objects represented by the green bounding boxes and 24 detected objects represented by the red bounding boxes. Each detected object has a confidence level and is identified by a letter (A,B,...,Y).
 
 The following table shows the bounding boxes with their corresponding confidences. The last column identifies the detections as TP or FP. In this example, a TP is considered if IOU 30%, otherwise it is a FP. By looking at the images above we can roughly tell if the detections are TP or FP.
