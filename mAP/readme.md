@@ -41,6 +41,11 @@ There are 7 images with 15 ground-truth objects represented by the green boundin
 
 The following table shows the bounding boxes with their corresponding confidences. The last column identifies the detections as TP or FP. In this example, a TP is considered if IOU 30%, otherwise it is a FP. By looking at the images above we can roughly tell if the detections are TP or FP.
 
+
+In some images, there is more than one detection overlapping a ground truth (Images 2, 3, 4, 5, 6, and 7). For those cases, the first detection is considered TP while the others are FP. This rule is applied by the PASCAL VOC 2012 metric: "e.g. 5 detections (TP) of a single object is counted as 1 correct detection and 4 false detections”.
+
+The Precision x Recall curve is plotted by calculating the precision and recall values of the accumulated TP or FP detections. For this, first, we need to order the detections by their confidences, then we calculate the precision and recall for each accumulated detection as shown in the table below (Note that for recall computation, the denominator term ("Acc TP + Acc FN" or "All ground truths") is constant at 15 since GT boxes are constant irrespective of detections).
+
 ## Different type of bounding box format
 
 The bounding box has the following (x, y) coordinates of its corners: top-left is (x_min, y_min), top-right is (x_max, y_min), bottom-left is (x_min, y_max), bottom-right is (x_max, y_max). As you see, coordinates of the bounding box's corners are calculated with respect to the top-left corner of the image.
