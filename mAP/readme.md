@@ -46,6 +46,12 @@ In some images, there is more than one detection overlapping a ground truth (Ima
 
 The Precision x Recall curve is plotted by calculating the precision and recall values of the accumulated TP or FP detections. For this, first, we need to order the detections by their confidences, then we calculate the precision and recall for each accumulated detection as shown in the table below (Note that for recall computation, the denominator term ("Acc TP + Acc FN" or "All ground truths") is constant at 15 since GT boxes are constant irrespective of detections).
 
+
+Example computation for the 2nd row (Image 7): Precision = TP/(TP+FP) = 1/2 = 0.5 and Recall = TP/(TP+FN) = 1/15 = 0.066
+
+
+Plotting the precision and recall values we have the following Precision x Recall curve:
+
 ## Different type of bounding box format
 
 The bounding box has the following (x, y) coordinates of its corners: top-left is (x_min, y_min), top-right is (x_max, y_min), bottom-left is (x_min, y_max), bottom-right is (x_max, y_max). As you see, coordinates of the bounding box's corners are calculated with respect to the top-left corner of the image.
