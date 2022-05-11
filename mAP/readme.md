@@ -54,7 +54,7 @@ Plotting the precision and recall values we have the following Precision x Recal
 
 The general definition for the Average Precision (AP) is finding the area under the precision-recall curve above.
 
-After calculating the AP(Average Precision) of every object then sum them up and divided them by the number of classes.
+After calculating the AP(Average Precision) of every object then sum them up and divided them by the number of classes
 
 ## Different type of bounding box format
 
