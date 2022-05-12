@@ -257,7 +257,7 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
             #fn_sorted.append(dictionary[key] - true_p_bar[key])
             tp_sorted.append(true_p_bar[key])
         fp_sorted = [2,3]
-        plt.barh(range(n_classes), fp_sorted, color='crimson', label='False Positive')
+        #plt.barh(range(n_classes), fp_sorted, color='crimson', label='False Positive')
         plt.barh(range(n_classes), tp_sorted, color='forestgreen', label='True Positive')
         plt.barh(range(n_classes), fn_sorted, color='orange', label='False Negative')
         #plt.barh(range(n_classes), tp_sorted, align='center', color='pink', label='False Negatives', left=fp_sorted)
@@ -522,7 +522,7 @@ ap_dictionary = {}
 lamr_dictionary = {}
 # open file to store the output
 
-f_html = open("validation_report_helmet.html", "w")
+f_html = open("validation_report_new_helmet_model.html", "w")
 #f_html.write('<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">')
 
 message2='''
@@ -540,9 +540,9 @@ f_html.write("<pre><h3>" + str(datetime.datetime.now()) + "</h3></pre> <br>\n")
 f_html.write("<pre><h1>" + "Author" + "</h1></pre>\n")
 f_html.write("<pre><h3>" + str("Limon") + "</h3></pre> <br>\n")
 f_html.write("<pre><h1>" + "model_version" + "</h1></pre>\n")
-f_html.write("<pre><h3>" + str("road_sidewalk_0.0.3") + "</h3></pre> <br>\n")
+f_html.write("<pre><h3>" + str("Helmet_detection_0.0.3") + "</h3></pre> <br>\n")
 f_html.write("<pre><h1>" + "Dataset Path" + "</h1></pre>\n")
-f_html.write("<pre><h3>" '<a href="https://www.dropbox.com/sh/o7lq8nw2unfm3sv/AACJqRKh900c8nO87eBmxbhwa?dl=0">Dataset</a></p>' "</h3></pre> <br>\n")
+f_html.write("<pre><h3>" '<a href="https://www.dropbox.com/sh/22yrwbw04u9g3ng/AABzbZEXELb_WsFQDO7PNoTPa?dl=0">Dataset</a></p>' "</h3></pre> <br>\n")
 
 
 
@@ -980,7 +980,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
                     #if ground_truth_img[0]=="42.jpg":
                     if (ground_truth_data[0]["class_name"] == class_name):
-                        if ovmax > 0.25:
+                        if ovmax > 0.3:
 
                             f_html.write("<td>" + '<h4><p style="color:green;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
                             f_html.write('<h4><p style="color:green;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
@@ -1278,21 +1278,27 @@ total_objects = 0
 for key, value in gt_counter_per_class.items():
         #file.write('%s:%s\n' % (key, value))
         total_objects += value
-        if key == "road":
+        if key == "With_Helmet":
             total_road.append(value)
-        elif key == "sidewalk":
+        elif key == "Without_Helmet":
             total_sidewalk.append(value)
 
 #print(total_objects)
 
 total_fn_road = []
 total_fn_sidewalk = []
+total_fn_helmet = []
+total_fn_chin_strap = []
 
 for key, value in count_new_false_negative.items():    
-    if key == "road":
+    if key == "With_Helmet":
         total_fn_road.append(value)
-    elif key == "sidewalk":
+    elif key == "Without_Helmet":
         total_fn_sidewalk.append(value)
+    elif key == "Helmet":
+        total_fn_helmet.append(value)
+    elif key == "Chin_Strap":
+        total_fn_chin_strap.append(value)
 
 #print(total_fn_road, total_fn_sidewalk)
 """
@@ -1319,35 +1325,35 @@ for class_name in dr_classes:
 """
  Plot the total number of occurences of each class in the "detection-results" folder
 """
-if draw_plot:
-    window_title = "detection-results-info"
-    # Plot title
-    plot_title = "detection-results\n"
-    plot_title += "(" + str(len(dr_files_list)) + " files and "
-    count_non_zero_values_in_dictionary = sum(int(x) > 0 for x in list(det_counter_per_class.values()))
-    plot_title += str(count_non_zero_values_in_dictionary) + " detected classes)"
-    # end Plot title
-    x_label = "Number of objects per class"
-    output_path2 = "d.png"
-    #message = "<pre><h1>" + "No. of object per class" + "</h1></pre> <br>\n"
-    #f_html.write(message)
-    #f_html.write('<a><img src="'+ str(output_path) +'"></a>')
-    #f_html.write("</body></html>")
-    to_show = False
-    plot_color = 'forestgreen'
-    true_p_bar = count_new_true_positives #count_true_positives
-    #print(true_p_bar)
-    draw_plot_func(
-        det_counter_per_class,
-        len(det_counter_per_class),
-        window_title,
-        plot_title,
-        x_label,
-        output_path2,
-        to_show,
-        plot_color,
-        true_p_bar
-        )
+# if draw_plot:
+#     window_title = "detection-results-info"
+#     # Plot title
+#     plot_title = "detection-results\n"
+#     plot_title += "(" + str(len(dr_files_list)) + " files and "
+#     count_non_zero_values_in_dictionary = sum(int(x) > 0 for x in list(det_counter_per_class.values()))
+#     plot_title += str(count_non_zero_values_in_dictionary) + " detected classes)"
+#     # end Plot title
+#     x_label = "Number of objects per class"
+#     output_path2 = "d.png"
+#     #message = "<pre><h1>" + "No. of object per class" + "</h1></pre> <br>\n"
+#     #f_html.write(message)
+#     #f_html.write('<a><img src="'+ str(output_path) +'"></a>')
+#     #f_html.write("</body></html>")
+#     to_show = False
+#     plot_color = 'forestgreen'
+#     true_p_bar = count_new_true_positives #count_true_positives
+#     #print(true_p_bar)
+#     draw_plot_func(
+#         det_counter_per_class,
+#         len(det_counter_per_class),
+#         window_title,
+#         plot_title,
+#         x_label,
+#         output_path2,
+#         to_show,
+#         plot_color,
+#         true_p_bar
+#         )
 
 """
  Write number of detected objects per class to output.txt
@@ -1491,9 +1497,12 @@ tp_s = tp2[1]
 fp_r = fp2[0]
 fp_s = fp2[1]
 
-print(total_fn_road)
+#print(total_fn_road)
 fp_n_r = total_fn_road[0]
 fp_n_s = total_fn_sidewalk[0]
+
+# fp_n_r = total_fn_helmet[0]
+# fp_n_s = total_fn_chin_strap[0]
 
 #print(tp, fp)
 
@@ -1636,7 +1645,9 @@ def make_metric_graph_for_two_matric(results, category_names):
 
 
 
-results_category = category_select()
+#results_category = category_select()
+
+
 #make_metric_graph(new_graph, category_names)
 #make_metric_graph(results_category[0], results_category[1])
 
