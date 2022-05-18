@@ -946,10 +946,10 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                     #print(ground_truth_img[0].split(".")[-2])
                     tp[idx] = 1
                     count_new_true_positives[class_name] += 1
-                # if ovmax < 0: # if there is intersections between the bounding-boxes
-
-                #     f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>')
-                #     f_html.write('<h4><p style="color:blue;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
+                if ovmax < 0: # if there is intersections between the bounding-boxes
+                    print(str(ground_truth_img[0].split(".")[-2]))
+                    # f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>')
+                    # f_html.write('<h4><p style="color:blue;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
                  
                 # if ground_truth_img[0]=="4.jpg":
                 #     if (ground_truth_data[0]["class_name"] == class_name):
