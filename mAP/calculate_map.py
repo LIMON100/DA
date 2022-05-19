@@ -6,7 +6,8 @@ import operator
 import sys
 import argparse
 import math
-
+import datetime
+from flask import flash
 import numpy as np
 
 MINOVERLAP = 0.3 # default value (defined in the PASCAL VOC2012 challenge)
@@ -33,14 +34,12 @@ if args.set_class_iou is not None:
 # make sure that the cwd() is the location of the python script (so that every path makes sense)
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-#GT_PATH = os.path.join(os.getcwd(), 'I:/JumpWatts/Dataset/map/test-helmt/new-mp/road-test', 'ground-truth')
-#DR_PATH = os.path.join(os.getcwd(), 'I:/JumpWatts/Dataset/map/test-helmt/new-mp/road-test', 'detection-results')
 
-GT_PATH2 = os.path.join(os.getcwd(), 'helmet_224x224_part2', 'actual')
-GT_PATH = os.path.join(os.getcwd(), 'helmet_224x224_part2', 'ground-truth')
-DR_PATH = os.path.join(os.getcwd(), 'helmet_224x224_part2', 'detection-results')
+GT_PATH2 = os.path.join(os.getcwd(), 'helmet_224x224', 'actual')
+GT_PATH = os.path.join(os.getcwd(), 'helmet_224x224', 'ground-truth')
+DR_PATH = os.path.join(os.getcwd(), 'helmet_224x224', 'detection-results')
 # if there are no images then no animation can be shown
-IMG_PATH = os.path.join(os.getcwd(), 'helmet_224x224_part2', 'images')
+IMG_PATH = os.path.join(os.getcwd(), 'helmet_224x224', 'images')
 if os.path.exists(IMG_PATH): 
     for dirpath, dirnames, files in os.walk(IMG_PATH):
         if not files:
@@ -199,123 +198,6 @@ def file_lines_to_list(path):
     return content
 
 
-
-"""
-Make html file for output images, map
-"""
-
-def make_html():
-    f=open("output/validation_images.html", "w")
-    message='''
-    <html>
-    <head>
-        <style type="text/css">
-        .gallery li {
-        display: inline;
-        list-style: none;
-        width: 150px;
-        min-height: 175px;
-        float: left;
-        margin: 0 10px 10px 0;
-        text-align: center;
-        }
-        </style>
-    </head>
-
-    <body>
-        <h2>Images with class name and confidence level</h2>
-        <a><img src="images/detections_one_by_one/road_detection0.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection1.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection2.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection3.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection4.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection5.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection6.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection7.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection8.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection9.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection10.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection11.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection12.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection22.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection13.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection14.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection15.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection16.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection17.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection18.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection19.jpg"></a>
-        <a><img src="images/detections_one_by_one/road_detection20.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection1.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection2.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection3.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection4.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection5.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection6.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection7.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection8.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection9.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection10.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection11.jpg"></a>
-        <a><img src="images/detections_one_by_one/sidewalk_detection12.jpg"></a>
-        
-    </body>
-
-    <body>
-        <h2>Actual annotation vs Predicted annotation</h2>
-        <a><img src="images/1.jpg"></a>
-        <a><img src="images/2.jpg"></a>
-        <a><img src="images/3.jpg"></a>
-        <a><img src="images/4.jpg"></a>
-        <a><img src="images/5.jpg"></a>
-        <a><img src="images/6.jpg"></a>
-        <a><img src="images/7.jpg"></a>
-        <a><img src="images/8.jpg"></a>
-        <a><img src="images/9.jpg"></a>
-        <a><img src="images/10.jpg"></a>
-        <a><img src="images/11.jpg"></a>
-        <a><img src="images/12.jpg"></a>
-        <a><img src="images/13.jpg"></a>
-        <a><img src="images/14.jpg"></a>
-        <a><img src="images/15.jpg"></a>
-        <a><img src="images/16.jpg"></a>
-        <a><img src="images/17.jpg"></a>
-        <a><img src="images/18.jpg"></a>
-        <a><img src="images/19.jpg"></a>
-        <a><img src="images/20.jpg"></a>
-        <a><img src="images/21.jpg"></a>
-        <a><img src="images/22.jpg"></a>
-        <a><img src="images/23.jpg"></a>
-        <a><img src="images/24.jpg"></a>
-    </body>
-
-    <body>
-        <h2>Detection result</h2>
-        <a><img src="detection-results-info.png"></a>
-        
-    </body>
-
-    <body>
-        <h2>Mean average precision</h2>
-        <a><img src="mAP.png"></a>
-        
-    </body>
-
-    <body>
-        <h2>No. of object per class</h2>
-        <a><img src="ground-truth-info.png"></a>
-        
-    </body>
-
-    </html>
-    '''
-
-    f.write(message)
-    f.close()
-
-
-
-
 """
  Draws text in image
 """
@@ -354,8 +236,10 @@ def adjust_axes(r, t, fig, axes):
 def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, output_path, to_show, plot_color, true_p_bar):
     # sort the dictionary by decreasing value, into a list of tuples
     sorted_dic_by_value = sorted(dictionary.items(), key=operator.itemgetter(1))
+    
     # unpacking the list of tuples into two lists
     sorted_keys, sorted_values = zip(*sorted_dic_by_value)
+    #print(sorted_values)
     # 
     if true_p_bar != "":
         """
@@ -366,11 +250,19 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
         """
         fp_sorted = []
         tp_sorted = []
+        fn_sorted = [30, 33]
+        
         for key in sorted_keys:
             fp_sorted.append(dictionary[key] - true_p_bar[key])
+            #fn_sorted.append(dictionary[key] - true_p_bar[key])
             tp_sorted.append(true_p_bar[key])
-        plt.barh(range(n_classes), fp_sorted, align='center', color='crimson', label='False Positive')
-        plt.barh(range(n_classes), tp_sorted, align='center', color='forestgreen', label='True Positive', left=fp_sorted)
+        fp_sorted = [2,3]
+        #plt.barh(range(n_classes), fp_sorted, color='crimson', label='False Positive')
+        plt.barh(range(n_classes), tp_sorted, color='forestgreen', label='True Positive')
+        plt.barh(range(n_classes), fn_sorted, color='orange', label='False Negative')
+        #plt.barh(range(n_classes), tp_sorted, align='center', color='pink', label='False Negatives', left=fp_sorted)
+        #plt.barh(range(n_classes), 10, align='center', color='pink', label='False Negatives')
+        #print("False positives" + ":" + str(true_p_bar))
         # add legend
         plt.legend(loc='lower right')
         """
@@ -382,12 +274,16 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
         for i, val in enumerate(sorted_values):
             fp_val = fp_sorted[i]
             tp_val = tp_sorted[i]
+            fn_val = fn_sorted[i]
+
             fp_str_val = " " + str(fp_val)
             tp_str_val = fp_str_val + " " + str(tp_val)
+            fn_str_val = " " + str(fn_val)
             # trick to paint multicolor with offset:
             # first paint everything and then repaint the first number
             t = plt.text(val, i, tp_str_val, color='forestgreen', va='center', fontweight='bold')
             plt.text(val, i, fp_str_val, color='crimson', va='center', fontweight='bold')
+            
             if i == (len(sorted_values)-1): # largest bar
                 adjust_axes(r, t, fig, axes)
     else:
@@ -465,10 +361,18 @@ if show_animation:
      Create a list of all the class names present in the ground-truth (gt_classes).
 """
 # get a list with the ground-truth files
-ground_truth_files_list = glob.glob(GT_PATH + '/*.txt')
+
+# ground_truth_files_list = glob.glob(GT_PATH + '/*.txt')
+# if len(ground_truth_files_list) == 0:
+#     error("Error: No ground-truth files found!")
+# ground_truth_files_list.sort()
+
+
+ground_truth_files_list = glob.glob(GT_PATH2 + '/*.txt')
 if len(ground_truth_files_list) == 0:
     error("Error: No ground-truth files found!")
 ground_truth_files_list.sort()
+
 # dictionary with counter per class
 gt_counter_per_class = {}
 counter_images_per_class = {}
@@ -478,12 +382,15 @@ for txt_file in ground_truth_files_list:
     #print(txt_file)
     file_id = txt_file.split(".txt", 1)[0]
     file_id = os.path.basename(os.path.normpath(file_id))
+
     # check if there is a correspondent detection-results file
-    temp_path = os.path.join(DR_PATH, (file_id + ".txt"))
-    if not os.path.exists(temp_path):
-        error_msg = "Error. File not found: {}\n".format(temp_path)
-        error_msg += "(You can avoid this error message by running extra/intersect-gt-and-dr.py)"
-        error(error_msg)
+
+    # temp_path = os.path.join(DR_PATH, (file_id + ".txt"))
+    # if not os.path.exists(temp_path):
+    #     error_msg = "Error. File not found: {}\n".format(temp_path)
+    #     error_msg += "(You can avoid this error message by running extra/intersect-gt-and-dr.py)"
+    #     error(error_msg)
+
     lines_list = file_lines_to_list(txt_file)
     # create ground-truth dictionary
     bounding_boxes = []
@@ -537,6 +444,7 @@ for txt_file in ground_truth_files_list:
 gt_classes = list(gt_counter_per_class.keys())
 # let's sort the classes alphabetically
 gt_classes = sorted(gt_classes)
+#print(gt_classes)
 n_classes = len(gt_classes)
 #print(gt_classes)
 #print(gt_counter_per_class)
@@ -596,6 +504,7 @@ for class_index, class_name in enumerate(gt_classes):
                 error_msg += " Received: " + line
                 error(error_msg)
             if tmp_class_name == class_name:
+                #print(tmp_class_name, class_name)
                 #print("match")
                 bbox = left + " " + top + " " + right + " " +bottom
                 bounding_boxes.append({"confidence":confidence, "file_id":file_id, "bbox":bbox})
@@ -612,16 +521,272 @@ sum_AP = 0.0
 ap_dictionary = {}
 lamr_dictionary = {}
 # open file to store the output
+
+f_html = open("validation_report_new_helmet_model.html", "w")
+#f_html.write('<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">')
+
+message2='''
+<html>
+   <body>
+      <h1><p style="text-align:center;">Validation Report</p></h1>
+   </body>
+</html>
+'''
+f_html.write(message2)
+
+
+f_html.write("<pre><h1>" + "Date" + "</h1></pre>\n")
+f_html.write("<pre><h3>" + str(datetime.datetime.now()) + "</h3></pre> <br>\n")
+f_html.write("<pre><h1>" + "Author" + "</h1></pre>\n")
+f_html.write("<pre><h3>" + str("Limon") + "</h3></pre> <br>\n")
+f_html.write("<pre><h1>" + "model_version" + "</h1></pre>\n")
+f_html.write("<pre><h3>" + str("Helmet_detection_0.0.3") + "</h3></pre> <br>\n")
+f_html.write("<pre><h1>" + "Dataset Path" + "</h1></pre>\n")
+f_html.write("<pre><h3>" '<a href="https://www.dropbox.com/sh/22yrwbw04u9g3ng/AABzbZEXELb_WsFQDO7PNoTPa?dl=0">Dataset</a></p>' "</h3></pre> <br>\n")
+
+
+
+""" 
+Threshold value table 
+"""
+
+message='''
+<html>
+<head>
+    <style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        }
+
+        td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        }
+
+        tr:nth-child(even) {
+
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Threshold value</h1>
+    <table>
+        <tr>
+            <th>Threshold name</th>
+            <th>value</th>
+        </tr>
+        <tr>
+            <td>Confidence level</td>
+            <td>0.5</td>
+        </tr>
+        <tr>
+            <td>Non-max suppresion(nms)</td>
+            <td>0.4</td>
+        </tr>
+        <tr>
+            <td>Intersection over union(IoU)</td>
+            <td>0.3</td>
+        </tr>
+</table>
+</body>
+ <br>\n
+</html>'''
+
+f_html.write(message)
+
+
+message_box_color='''
+<html>
+<head>
+    <style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        }
+
+        td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        }
+
+        tr:nth-child(even) {
+
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Box color defined</h1>
+    <table>
+        <tr>
+            <th>Box color</th>
+            <th>Indicate</th>
+        </tr>
+        <tr>
+            <td><h5><p style="color:blue">Blue</p></h5></td>
+            <td><h5>Ground-truth/Actual-annotation</h5></td>
+        </tr>
+        <tr>
+            <td><h5><p style="color:green">Green</p></h5></td>
+            <td><h5>True Positive</h5></td>
+        </tr>
+        <tr>
+            <td><h5><p style="color:red">Red</p></h45</td>
+            <td><h5>False Positive</h5></td>
+        </tr>
+        <tr>
+            <td><h5><p style="color:purple">Purple</p></h5></td>
+            <td><h5>False Negative</h5></td>
+        </tr>
+</table>
+</body>
+ <br>\n
+</html>'''
+
+f_html.write(message_box_color)
+
+
+
+"""
+Matrics definition
+"""
+message_metric_definition='''
+<html>
+<head>
+    <style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        }
+
+        td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        }
+
+        tr:nth-child(even) {
+
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Metrics Definition</h1>
+    <table>
+        <tr>
+            <th>Metric name</th>
+            <th>Definition</th>
+        </tr>
+        <tr>
+            <td><h5>True positice</p></h5></td>
+            <td><h5>A true positive result is when model correctly labels or categorizes an image. For example, categorizing an image of a road as a road</h5></td>
+        </tr>
+        <tr>
+            <td><h5>True negative</p></h5></td>
+            <td><h5>A true negative result is when model correctly does not label or categorize an image. For example, not categorizing an image of a road as a sidewalk</h5></td>
+        </tr>
+        <tr>
+            <td><h5>False Positive</h5></td>
+            <td><h5>A false positive result is when model labels or categorizes an image when it should not have. For example, categorizing an image of a road as a sidewalk</h5></td>
+        </tr>
+        <tr>
+            <td><h5>False Negative</h5></td>
+            <td><h5>A false negative result is when model does not label or categorize an image, but should have. For example, not categorizing an image of a road as a road</h5></td>
+        </tr>
+</table>
+</body>
+ <br>\n
+</html>'''
+
+f_html.write(message_metric_definition)
+
+
+
+
+
+
+f_html.write("<pre><h1>" + "Images with class name, confidence level " + "</h1></pre> <br>\n")
+
+
+message3='''
+<html>
+<head>
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script src="filter.js"></script>
+    
+</head>
+
+<body>
+    <table id="emp-table">
+        <thead>
+            <th col-index = 1>Img No. &nbsp </th>
+
+            <th col-index = 2>Actual Class
+                <select class="table-filter" onchange="filter_rows()">
+                    <option value="all"></option>
+                </select> &nbsp </th>
+
+            <th col-index = 3>Predicted Class
+                <select class="table-filter" onchange="filter_rows()">
+                    <option value="all"></option>
+                </select> &nbsp </th>
+
+            <th col-index = 4>Confidence level 
+                <select class="table-filter" onchange="filter_rows()">
+                    <option value="all"></option>
+                </select> &nbsp </th>
+
+            <th col-index = 5>Actual Bounding Box (x,y),(w,h) &nbsp &nbsp </th>
+            <th col-index = 6>predicted Bounding Box (x,y), (w,h) &nbsp &nbsp </th>
+          
+            <th col-index = 7>Result 
+                <select class="table-filter" onchange="filter_rows()">
+                    <option value="all"></option>
+                </select>&nbsp &nbsp </th>
+
+            <th col-index = 8>Image &nbsp &nbsp </th>
+    
+        </thead>
+        <tbody>
+
+'''
+
+f_html.write(message3)
+cnt=0
+
+file_double_name = []
+file_double_name.append(0)
+dict_info = {}
+blue_flag=0
+
+
+# s 119 13 28
 with open(output_files_path + "/output.txt", 'w') as output_file:
     output_file.write("# AP and precision/recall per class\n")
     count_true_positives = {}
+
+    count_new_true_positives = {}
+    # file_double_name = []
+    # file_double_name.append(0)
     for class_index, class_name in enumerate(gt_classes):
         count_true_positives[class_name] = 0
+        count_new_true_positives[class_name] = 0
         """
          Load detection-results of that class
         """
         dr_file = TEMP_FILES_PATH + "/" + class_name + "_dr.json"
         dr_data = json.load(open(dr_file))
+        #print(dr_data)
 
         """
          Assign detection-results to ground-truth objects
@@ -677,6 +842,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                             ovmax = ov
                             gt_match = obj
 
+            #print(ground_truth_data[0]["class_name"])
             # assign detection as true positive/don't care/false positive
             if show_animation:
                 status = "NO MATCH FOUND!" # status is only used in the animation
@@ -693,6 +859,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                             tp[idx] = 1
                             gt_match["used"] = True
                             count_true_positives[class_name] += 1
+                            
                             # update the ".json" file
                             with open(gt_file, 'w') as f:
                                     f.write(json.dumps(ground_truth_data))
@@ -712,12 +879,14 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
             """
              Draw image to show animation
             """
+            
             if show_animation:
                 height, widht = img.shape[:2]
                 # colors (OpenCV works with BGR)
                 white = (255,255,255)
-                light_blue = (255,200,100)
-                green = (0,255,0)
+                light_blue = (255,0,0) #255,200,100)
+                #green = (0,255,0)
+                green = (0,128,0)
                 light_red = (30,30,255)
                 # 1st line
                 margin = 10
@@ -726,6 +895,8 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                 img, line_width = draw_text_in_image(img, text, (margin, v_pos), white, 0)
                 text = "Class [" + str(class_index) + "/" + str(n_classes) + "]: " + class_name + " "
                 img, line_width = draw_text_in_image(img, text, (margin + line_width, v_pos), light_blue, line_width)
+    
+                
                 if ovmax != -1:
                     color = light_red
                     if status == "INSUFFICIENT OVERLAP":
@@ -733,39 +904,145 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                     else:
                         text = "IoU: {0:.2f}% ".format(ovmax*100) + ">= {0:.2f}% ".format(min_overlap*100)
                         color = green
+                        #print(text)
                     img, _ = draw_text_in_image(img, text, (margin + line_width, v_pos), color, line_width)
                 # 2nd line
                 v_pos += int(bottom_border / 2.0)
                 rank_pos = str(idx+1) # rank position (idx starts at 0)
                 text = "Detection #rank: " + rank_pos + " confidence: {0:.2f}% ".format(float(detection["confidence"])*100)
                 img, line_width = draw_text_in_image(img, text, (margin, v_pos), white, 0)
+                #print(text)
+                #check here now
+
                 color = light_red
                 if status == "MATCH!":
                     color = green
                 text = "Result: " + status + " "
                 img, line_width = draw_text_in_image(img, text, (margin + line_width, v_pos), color, line_width)
 
+                for i in range(0, len(file_double_name)):
+                    if file_double_name[i] == ground_truth_img[0]:
+                        #print(ground_truth_img[0])
+                        cnt += 1
+                        dict_info = {ground_truth_img[0]: cnt} 
+                        break
+
+                file_double_name.append(ground_truth_img[0])
+
+                # if ground_truth_img[0]=="62.jpg":
+                #     print(ovmax)
+                
+                # if ovmax < 0:
+                #     break
+
+                # f_html.write("<tr><td>"'<h4>' + str(ground_truth_img[0].split(".")[-2]) + '</h4>'"</td>")
+                # f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
+                # f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
+                # f_html.write("<td>"'<h4>'+ str(detection["confidence"]) +'</h4>'"</td>")
+
+
                 font = cv2.FONT_HERSHEY_SIMPLEX
+                if  ovmax <0:
+                    #print(ground_truth_img[0].split(".")[-2])
+                    tp[idx] = 1
+                    count_new_true_positives[class_name] += 1
+                # if ovmax < 0: # if there is intersections between the bounding-boxes
+                #     print(str(ground_truth_img[0].split(".")[-2]))
+                    # f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>')
+                    # f_html.write('<h4><p style="color:blue;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
+                 
+                # if ground_truth_img[0]=="151.jpg":
+                #     #if (ground_truth_data[0]["class_name"] == class_name):
+                #     print(ovmax)
                 if ovmax > 0: # if there is intersections between the bounding-boxes
+                    # if ground_truth_img[0]=="151.jpg":
+                    # #if (ground_truth_data[0]["class_name"] == class_name):
+                    #     print(ovmax)
+                    
+                    f_html.write("<tr><td>"'<h4>' + str(ground_truth_img[0].split(".")[-2]) + '</h4>'"</td>")
+                    if (ground_truth_data[0]["class_name"] == class_name):
+                        f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
+                        f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
+                    if (ground_truth_data[0]["class_name"] != class_name):
+                        #f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
+                        f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
+                        f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
+                    f_html.write("<td>"'<h4>'+ str(detection["confidence"]) +'</h4>'"</td>")
+
+                    
+
                     bbgt = [ int(round(float(x))) for x in gt_match["bbox"].split() ]
                     cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
                     cv2.rectangle(img_cumulative,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
-                    cv2.putText(img_cumulative, class_name, (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
-                bb = [int(i) for i in bb]
-                cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
-                cv2.rectangle(img_cumulative,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
-                cv2.putText(img_cumulative, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
-                # show image
-                cv2.imshow("Animation", img)
-                cv2.waitKey(20) # show for 20 ms
-                # save image to output
-                output_img_path = output_files_path + "/images/detections_one_by_one/" + class_name + "_detection" + str(idx) + ".jpg"
-                #output_img_path = output_files_path + "/images/detections_one_by_one/" + "_detection" + str(idx) + ".jpg"
-                cv2.imwrite(output_img_path, img)
-                # save the image with all the objects drawn to it
-                cv2.imwrite(img_cumulative_path, img_cumulative)
+       
+                    #f_html.write("<th>" + "x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1]) + "(blue)"+"</th>")
+                    #f_html.write("<th>" + "w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3]) + "(blue)"+"</th>")
 
-        #print(tp)
+                    f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1])+'</p></h4>')
+                    f_html.write('<h4><p style="color:blue;">'+"w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3])+'</p></h4>' +"</td>")
+                    
+                    blue_flag=1
+                    cv2.putText(img_cumulative, class_name, (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
+                    #cv2.putText(img, "Actual annotation/ground-truth", (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
+
+                    bb = [int(i) for i in bb]
+
+                  
+                    #if (ground_truth_data[0]["class_name"] == class_name):
+                    if ovmax > 0.08:
+
+                        f_html.write("<td>" + '<h4><p style="color:green;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
+                        f_html.write('<h4><p style="color:green;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
+
+                        """set empty to red"""
+                
+                        # f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>' +"</td>")
+                        # f_html.write("<td>" + '<h4><p style="color:red;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
+                        
+                        cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
+                
+                        #f_html.write("<th>" + '<p style="color:green;">True Positive</p>' + "</th>")
+                        #f_html.write("<td>" + str("True Positive") + "</td>")
+                        f_html.write("<td>"'<h4>True Positive</h4>'"</td>")
+                        cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),green,2)
+
+                        tp[idx] = 1
+                        count_new_true_positives[class_name] += 1
+
+                    else:
+
+                        f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
+                        f_html.write('<h4><p style="color:red;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
+
+                        cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
+
+                        #f_html.write("<td>" + '<p style="color:red;">False Positive</p>' + "</td>")
+                        #f_html.write("<td>" + str("False Positive") + "</td>")
+                        f_html.write("<td>"'<h4>False Positive</h4>'"</td>")
+                        cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),light_red,2)
+                        fp[idx] = 1
+            
+                    #cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
+        
+                    cv2.rectangle(img_cumulative,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
+                    cv2.putText(img_cumulative, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
+                    
+                    # show image
+                    cv2.imshow("Animation", img)
+                    cv2.waitKey(20) # show for 20 ms
+                    # save image to output
+                    output_img_path = output_files_path + "/images/detections_one_by_one/" + class_name + "_detection" + str(idx) + ".jpg"
+            
+                    cv2.imwrite(output_img_path, img)
+                    
+                    # save the image with all the objects drawn to it
+                    cv2.imwrite(img_cumulative_path, img_cumulative)
+                    
+                    f_html.write("<td>" + '<a><img src="'+ str(output_img_path) +'"></a>' + "</td>")
+                    f_html.write("</tr>")
+                    
+        
+        # print(cnt)
         # compute precision/recall
         cumsum = 0
         for idx, val in enumerate(fp):
@@ -840,13 +1117,26 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
     mAP = sum_AP / n_classes
     text = "mAP = {0:.2f}%".format(mAP*100)
     output_file.write(text + "\n")
-    print(text)
+    #print(text)
+    #f_html.write("</tr>")
+
+
+#print(count_new_true_positives)
 
 """
  Draw false negatives
 """
+count_new_false_negative = {}
+
+name_of_classes = "scripts/extra/classes.txt"
+lines = file_lines_to_list(name_of_classes)
+for line in range(0, len(lines)):
+    #print(lines[line])
+    count_new_false_negative[lines[line]] = 0
+
 if show_animation:
-    pink = (203,192,255)
+    #pink = (203,192,255)
+    purple = (128,0,128)
     for tmp_file in gt_files:
         ground_truth_data = json.load(open(tmp_file))
         #print(ground_truth_data)
@@ -855,18 +1145,85 @@ if show_animation:
         img_id = tmp_file[tmp_file.find(start)+len(start):tmp_file.rfind('_ground_truth.json')]
         img_cumulative_path = output_files_path + "/images/" + img_id + ".jpg"
         img = cv2.imread(img_cumulative_path)
+   
         if img is None:
             img_path = IMG_PATH + '/' + img_id + ".jpg"
             img = cv2.imread(img_path)
         # draw false negatives
         for obj in ground_truth_data:
+            #print(class_name)
+            #print(obj)
             if not obj['used']:
+
+                #count_new_false_negative[obj["class_name"]] = 0
+
+                #img_cumulative_path.split("/")[-1].split(".")[-2])
                 bbgt = [ int(round(float(x))) for x in obj["bbox"].split() ]
-                cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),pink,2)
+                cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),purple,2)
+                
+                
+                f_html.write("<tr><td>"'<h4>' + str(img_cumulative_path.split("/")[-1].split(".")[-2]) + '</h4>'"</td>")
+
+                #check image name and check the detected result and find class name
+
+                file_id_txt = img_cumulative_path.split("/")[-1].split(".")[-2]
+                temp_path = os.path.join(DR_PATH, (file_id_txt + ".txt"))
+
+                if not os.path.exists(temp_path):
+
+                    class_name_font = str(obj["class_name"])
+                    f_html.write("<td>"'<h4>'+ class_name_font +'</h4>'"</td>")
+                    f_html.write("<td>"'<h4>N/A</h4>'"</td>")
+                    f_html.write("<td>"'<h4>N/A</h4>'"</td>")
+
+                    f_html.write("<td>" + '<h4><p style="color:purple;">'+"x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1])+'</p></h4>')
+                    f_html.write('<h4><p style="color:purple;">'+"w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3])+'</p></h4>' +"</td>")
+                
+                
+                    f_html.write("<td>" + '<h4><p style="color:black;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>')
+                    f_html.write('<h4><p style="color:black;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
+
+                else:
+
+                    class_name_font = str(obj["class_name"])
+                    f_html.write("<td>"'<h4>'+ class_name_font +'</h4>'"</td>")
+
+                    lines = file_lines_to_list(temp_path)
+                    for line in lines:
+                        tmp_class_name, confidence, left, top, right, bottom = line.split()
+
+                    f_html.write("<td>"'<h4>'+ tmp_class_name +'</h4>'"</td>")
+
+                    f_html.write("<td>"'<h4>N/A</h4>'"</td>")
+
+                    f_html.write("<td>" + '<h4><p style="color:purple;">'+"x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1])+'</p></h4>')
+                    f_html.write('<h4><p style="color:purple;">'+"w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3])+'</p></h4>' +"</td>")
+                    
+                    f_html.write("<td>" + '<h4><p style="color:black;">'+"x:" + str(left) + " " + "y:" + str(top)+'</p></h4>')
+                    f_html.write('<h4><p style="color:black;">'+"w:" + str(right) + " " + "h:" + str(bottom)+'</p></h4>' +"</td>")
+
+
+                f_html.write("<td>"'<h4>False Negative</h4>'"</td>")
+                count_new_false_negative[str(obj["class_name"])] += 1
+
+                cv2.putText(img, "False Negative", (bbgt[0],bbgt[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
+
+                f_html.write("<td>" + '<a><img src="'+ str(img_cumulative_path) +'"></a>' + "</td>")
+                f_html.write("</tr>")
+                
         cv2.imwrite(img_cumulative_path, img)
+
+f_html.write("</tbody>")
+f_html.write("</table>")
+#f_html.write("<script  src="' function.js '"></script>")
+f_html.write("<script>"' window.onload = () => {console.log(document.querySelector("#emp-table > tbody > tr:nth-child(1) > td:nth-child(2) ").innerHTML);}; getUniqueValuesFromColumn() '"</script>")
+
+f_html.write("</body></html>")
 
 # remove the temp_files directory
 shutil.rmtree(TEMP_FILES_PATH)
+
+#print(count_new_false_negative)
 
 """
  Count total of detection-results
@@ -890,7 +1247,7 @@ for txt_file in dr_files_list:
 #print(det_counter_per_class)
 dr_classes = list(det_counter_per_class.keys())
 
-
+#print(det_counter_per_class)
 """
  Plot the total number of occurences of each class in the ground-truth
 """
@@ -900,6 +1257,10 @@ if draw_plot:
     plot_title += "(" + str(len(ground_truth_files_list)) + " files and " + str(n_classes) + " classes)"
     x_label = "Number of objects per class"
     output_path = output_files_path + "/ground-truth-info.png"
+    message = "<pre><h1>" + "Detection result" + "</h1></pre> <br>\n"
+    f_html.write(message)
+    f_html.write('<a><img src="'+ str(output_path) +'"></a>')
+    f_html.write("</body></html>")
     to_show = False
     plot_color = 'forestgreen'
     draw_plot_func(
@@ -914,11 +1275,47 @@ if draw_plot:
         '',
         )
 
+
+"""
+Find total number of object in total
+"""
+
+total_road = []
+total_sidewalk = []
+
+total_objects = 0
+for key, value in gt_counter_per_class.items():
+        #file.write('%s:%s\n' % (key, value))
+        total_objects += value
+        if key == "With_Helmet":
+            total_road.append(value)
+        elif key == "Without_Helmet":
+            total_sidewalk.append(value)
+
+#print(total_objects)
+
+total_fn_road = []
+total_fn_sidewalk = []
+total_fn_helmet = []
+total_fn_chin_strap = []
+
+for key, value in count_new_false_negative.items():    
+    if key == "With_Helmet":
+        total_fn_road.append(value)
+    elif key == "Without_Helmet":
+        total_fn_sidewalk.append(value)
+    elif key == "Helmet":
+        total_fn_helmet.append(value)
+    elif key == "Chin_Strap":
+        total_fn_chin_strap.append(value)
+
+#print(total_fn_road, total_fn_sidewalk)
 """
  Write number of ground-truth objects per class to results.txt
 """
 with open(output_files_path + "/output.txt", 'a') as output_file:
     output_file.write("\n# Number of ground-truth objects per class\n")
+ 
     for class_name in sorted(gt_counter_per_class):
         output_file.write(class_name + ": " + str(gt_counter_per_class[class_name]) + "\n")
 
@@ -929,69 +1326,142 @@ for class_name in dr_classes:
     # if class exists in detection-result but not in ground-truth then there are no true positives in that class
     if class_name not in gt_classes:
         count_true_positives[class_name] = 0
-#print(count_true_positives)
+
+# print(count_true_positives)
+# print(count_new_true_positives)
+
 
 """
  Plot the total number of occurences of each class in the "detection-results" folder
 """
-if draw_plot:
-    window_title = "detection-results-info"
-    # Plot title
-    plot_title = "detection-results\n"
-    plot_title += "(" + str(len(dr_files_list)) + " files and "
-    count_non_zero_values_in_dictionary = sum(int(x) > 0 for x in list(det_counter_per_class.values()))
-    plot_title += str(count_non_zero_values_in_dictionary) + " detected classes)"
-    # end Plot title
-    x_label = "Number of objects per class"
-    output_path = output_files_path + "/detection-results-info.png"
-    to_show = False
-    plot_color = 'forestgreen'
-    true_p_bar = count_true_positives
-    draw_plot_func(
-        det_counter_per_class,
-        len(det_counter_per_class),
-        window_title,
-        plot_title,
-        x_label,
-        output_path,
-        to_show,
-        plot_color,
-        true_p_bar
-        )
+# if draw_plot:
+#     window_title = "detection-results-info"
+#     # Plot title
+#     plot_title = "detection-results\n"
+#     plot_title += "(" + str(len(dr_files_list)) + " files and "
+#     count_non_zero_values_in_dictionary = sum(int(x) > 0 for x in list(det_counter_per_class.values()))
+#     plot_title += str(count_non_zero_values_in_dictionary) + " detected classes)"
+#     # end Plot title
+#     x_label = "Number of objects per class"
+#     output_path2 = "d.png"
+#     #message = "<pre><h1>" + "No. of object per class" + "</h1></pre> <br>\n"
+#     #f_html.write(message)
+#     #f_html.write('<a><img src="'+ str(output_path) +'"></a>')
+#     #f_html.write("</body></html>")
+#     to_show = False
+#     plot_color = 'forestgreen'
+#     true_p_bar = count_new_true_positives #count_true_positives
+#     #print(true_p_bar)
+#     draw_plot_func(
+#         det_counter_per_class,
+#         len(det_counter_per_class),
+#         window_title,
+#         plot_title,
+#         x_label,
+#         output_path2,
+#         to_show,
+#         plot_color,
+#         true_p_bar
+#         )
 
 """
  Write number of detected objects per class to output.txt
 """
+
+# tp = []
+# fp = []
+
+# with open(output_files_path + "/output.txt", 'a') as output_file:
+#     output_file.write("\n# Number of detected objects per class\n")
+#     for class_name in sorted(dr_classes):
+#         n_det = det_counter_per_class[class_name]
+#         text = class_name + ": " + str(n_det)
+#         text += " (tp:" + str(count_true_positives[class_name]) + ""
+#         text += ", fp:" + str(n_det - count_true_positives[class_name]) + ")\n"
+
+#         tp2 = str(count_true_positives[class_name])
+#         fp2 = str(n_det - count_true_positives[class_name])
+#         tp.append(tp2)
+#         fp.append(fp2)
+#         output_file.write(text)
+
+#print(tp,fp)
+""""
+Check the updated one which doesnot have false positive
+"""
+tp2 = []
+fp2 = []
+
+new_graph = {}
+
+def append_value(dict_obj, key, value):
+    # Check if key exist in dict or not
+    if key in dict_obj:
+        # Key exist in dict.
+        # Check if type of value of key is list or not
+        if not isinstance(dict_obj[key], list):
+            # If type is not list then make it list
+            dict_obj[key] = [dict_obj[key]]
+        # Append the value in list
+        dict_obj[key].append(value)
+    else:
+        # As key is not in dict,
+        # so, add key-value pair
+        dict_obj[key] = value
+
 with open(output_files_path + "/output.txt", 'a') as output_file:
     output_file.write("\n# Number of detected objects per class\n")
     for class_name in sorted(dr_classes):
         n_det = det_counter_per_class[class_name]
         text = class_name + ": " + str(n_det)
-        text += " (tp:" + str(count_true_positives[class_name]) + ""
-        text += ", fp:" + str(n_det - count_true_positives[class_name]) + ")\n"
+        text += " (tp:" + str(count_new_true_positives[class_name]) + ""
+        text += ", fp:" + str(n_det - count_new_true_positives[class_name]) + ")\n"
+
+        tp3 = str(count_new_true_positives[class_name])
+        fp3 = str(n_det - count_new_true_positives[class_name])
+        fn3 = str(count_new_false_negative[class_name])
+        tp2.append(tp3)
+        fp2.append(fp3)
         output_file.write(text)
+        append_value(new_graph, class_name, int(tp3))
+        append_value(new_graph, class_name, int(fp3))
+        # if class_name == "road":
+        #     append_value(new_graph,class_name,2)
+        # else:
+        #     append_value(new_graph,class_name,0)
+
+        append_value(new_graph, class_name, int(fn3))
+
+#print(tp2,fp2)
+#print(count_new_true_positives)
+#print("New graph")
+#print(new_graph)
 
 """
  Draw log-average miss rate plot (Show lamr of all classes in decreasing order)
 """
-if draw_plot:
-    window_title = "lamr"
-    plot_title = "log-average miss rate"
-    x_label = "log-average miss rate"
-    output_path = output_files_path + "/lamr.png"
-    to_show = False
-    plot_color = 'royalblue'
-    draw_plot_func(
-        lamr_dictionary,
-        n_classes,
-        window_title,
-        plot_title,
-        x_label,
-        output_path,
-        to_show,
-        plot_color,
-        ""
-        )
+# if draw_plot:
+#     window_title = "lamr"
+#     plot_title = "log-average miss rate"
+#     x_label = "log-average miss rate"
+#     output_path = output_files_path + "/lamr.png"
+#     message = "<pre><h1>" + "Low average miss rate" + "</h1></pre> <br>\n"
+#     f_html.write(message)
+#     f_html.write('<a><img src="'+ str(output_path) +'"></a>')
+#     f_html.write("</body></html>")
+#     to_show = False
+#     plot_color = 'royalblue'
+#     draw_plot_func(
+#         lamr_dictionary,
+#         n_classes,
+#         window_title,
+#         plot_title,
+#         x_label,
+#         output_path,
+#         to_show,
+#         plot_color,
+#         ""
+#         )
 
 """
  Draw mAP plot (Show AP's of all classes in decreasing order)
@@ -1001,7 +1471,11 @@ if draw_plot:
     plot_title = "mAP = {0:.2f}%".format(mAP*100)
     x_label = "Average Precision"
     output_path = output_files_path + "/mAP.png"
-    to_show = True
+    message = "<pre><h1>" + "MAP(Mean average precision)" + "</h1></pre> <br>\n"
+    f_html.write(message)
+    f_html.write('<a><img src="'+ str(output_path) +'"></a>')
+    f_html.write("</body></html>")
+    to_show = False
     plot_color = 'royalblue'
     draw_plot_func(
         ap_dictionary,
@@ -1017,5 +1491,248 @@ if draw_plot:
 
 
 
-make_html()
-print("Make html file inside output folder")
+message = "<pre><h1>" + "Precision Recall Curve" + "</h1></pre> <br>\n"
+f_html.write(message)
+
+pr_directory = "output/classes/"
+
+for filename in os.listdir(pr_directory):
+    f = os.path.join(pr_directory, filename)
+    f_html.write('<a><img src="'+ f  +'"></a>')
+
+
+tp_r = tp2[0]
+tp_s = tp2[1]
+fp_r = fp2[0]
+fp_s = fp2[1]
+
+#print(total_fn_road)
+fp_n_r = total_fn_road[0]
+fp_n_s = total_fn_sidewalk[0]
+
+# fp_n_r = total_fn_helmet[0]
+# fp_n_s = total_fn_chin_strap[0]
+
+#print(tp, fp)
+
+""" 
+Ploting conf-matrix
+"""
+
+#print(fp_r, fp_s)
+
+results = {}
+category_names = []
+
+def category_select():
+    if fp_r == str(0) and fp_s == str(0):
+
+        category_names = ['True Positives', 'False Negatives']
+
+        results = {
+        
+            'road': [int(tp_r),  int(fp_n_r)],
+            'sidewalk': [int(tp_s), int(fp_n_s)]
+            
+        }
+    
+    elif fp_r == str(0):
+
+        category_names = ['True Positives', 'False Positives', 'False Negatives']
+
+        results = {
+        
+            'road': [int(tp_r), 0, int(fp_n_r)],
+            'sidewalk': [int(tp_s), int(fp_s), int(fp_n_s)]
+            
+        }
+    elif fp_s == str(0):
+
+        category_names = ['True Positives', 'False Positives', 'False Negatives']
+
+        results = {
+        
+            'road': [int(tp_r), int(fp_r), int(fp_n_r)],
+            'sidewalk': [int(tp_s), 0, int(fp_n_s)]
+            
+        }
+
+    return results, category_names
+
+
+
+
+def make_metric_graph_for_three_matric(results, category_names):
+    """
+    Parameters
+    ----------
+    results : dict
+        A mapping from question labels to a list of answers per category.
+        It is assumed all lists contain the same number of entries and that
+        it matches the length of *category_names*.
+    category_names : list of str
+        The category labels.
+    """
+    labels = list(results.keys())
+    data = np.array(list(results.values()))
+    #print(data)
+    data_cum = data.cumsum(axis=1)
+    category_colors = plt.get_cmap('RdYlGn')(
+        np.linspace(0.15, 0.95, data.shape[1]))
+    
+    #print(category_colors)
+
+    fig, ax = plt.subplots(figsize=(9.2, 5))
+    ax.invert_yaxis()
+    ax.xaxis.set_visible(False)
+    ax.set_xlim(0, np.sum(data, axis=1).max())
+
+    color2 = ["green", 'crimson', 'purple']
+
+    for i, (colname, color) in enumerate(zip(category_names, category_colors)):
+        widths = data[:, i]
+        starts = data_cum[:, i] - widths
+        ax.barh(labels, widths, left=starts, height=0.5,
+                label=colname, color=color2[i])
+        xcenters = starts + widths / 2
+
+        r, g, b, _ = color
+        text_color = 'darkgrey' #if r * g * b < 0.5 else 'darkgrey'
+        for y, (x, c) in enumerate(zip(xcenters, widths)):
+            ax.text(x, y, str(int(c)), ha='center', va='center',
+                    color="gainsboro")
+    ax.legend(ncol=len(category_names), bbox_to_anchor=(0, 1),
+              loc='lower left', fontsize='small')
+
+    return fig, ax
+
+
+
+def make_metric_graph_for_two_matric(results, category_names):
+    """
+    Parameters
+    ----------
+    results : dict
+        A mapping from question labels to a list of answers per category.
+        It is assumed all lists contain the same number of entries and that
+        it matches the length of *category_names*.
+    category_names : list of str
+        The category labels.
+    """
+    labels = list(results.keys())
+    data = np.array(list(results.values()))
+    #print(data)
+    data_cum = data.cumsum(axis=1)
+    category_colors = plt.get_cmap('RdYlGn')(
+        np.linspace(0.15, 0.95, data.shape[1]))
+    
+    #print(category_colors)
+
+    fig, ax = plt.subplots(figsize=(9.2, 5))
+    ax.invert_yaxis()
+    ax.xaxis.set_visible(False)
+    ax.set_xlim(0, np.sum(data, axis=1).max())
+
+    color2 = ["green", 'purple']
+
+    for i, (colname, color) in enumerate(zip(category_names, category_colors)):
+        widths = data[:, i]
+        starts = data_cum[:, i] - widths
+        ax.barh(labels, widths, left=starts, height=0.5,
+                label=colname, color=color2[i])
+        xcenters = starts + widths / 2
+
+        r, g, b, _ = color
+        text_color = 'darkgrey' #if r * g * b < 0.5 else 'darkgrey'
+        for y, (x, c) in enumerate(zip(xcenters, widths)):
+            ax.text(x, y, str(int(c)), ha='center', va='center',
+                    color="gainsboro")
+    ax.legend(ncol=len(category_names), bbox_to_anchor=(0, 1),
+              loc='lower left', fontsize='small')
+
+    return fig, ax
+
+
+
+#results_category = category_select()
+
+
+#make_metric_graph(new_graph, category_names)
+#make_metric_graph(results_category[0], results_category[1])
+
+
+
+
+"""
+Loop through the category_list
+"""
+
+#print(new_graph)
+check_false_positive_cnt = 0
+
+
+for key,value in new_graph.items():
+
+    if value[1] == 0:
+        check_false_positive_cnt += 1
+        
+    # elif value[1] == 0:
+    #     check_false_positive_cnt += 1
+
+#print(check_false_positive_cnt)
+
+dict2 = {}
+for key,value in new_graph.items():
+
+    if check_false_positive_cnt == 2:
+        append_value(dict2, key, value[0])
+        append_value(dict2, key, value[2])
+        category_names = ['True Positives', 'False Negatives']
+        make_metric_graph_for_two_matric(dict2, category_names)
+
+    elif check_false_positive_cnt != 2:
+        append_value(dict2, key, value[0])
+        append_value(dict2, key, value[1])
+        append_value(dict2, key, value[2])
+        category_names = ['True Positives', 'False Positives', 'False Negatives']
+        make_metric_graph_for_three_matric(dict2, category_names)
+
+
+
+
+plt.savefig("output" + "/detection_results.jpg")
+#plt.show()
+
+message = "<pre><h1>" + "True positve, False positive, False negetive Graph" + "</h1></pre> <br>\n"
+f_html.write(message)
+f_html.write('<a><img src="'+ str("output" + "/detection_results.jpg") +'"></a>')
+f_html.write("</body></html>")
+
+
+
+""" Accuracy """
+# tp = int(tp2[0]) + int(tp2[1])
+# ac = tp / total_objects
+# #print(ac * 100)
+
+
+# file_path = "output/" + "ac.txt"
+# file = open(file_path,"w")
+# file.write("Precision:" + '%.2f' % (ac * 100) + "%")
+# file.close()
+
+# message = "<pre><h1>" + "Accuracy:" + '%.2f' % (ac * 100) + "%" + "</h1></pre> <br>\n"
+# f_html.write(message)
+# f_html.write("</body></html>")
+
+total_tp = 0
+for key, value in new_graph.items():
+    total_tp += value[0]
+
+# print("Total object")
+# print(total_objects)
+ac2 = total_tp / total_objects
+
+message_new = "<pre><h1>" + "Accuracy:" + '%.2f' % (ac2 * 100) + "%" + "</h1></pre> <br>\n"
+f_html.write(message_new)
+f_html.write("</body></html>")
