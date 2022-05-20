@@ -584,7 +584,7 @@ message='''
         </tr>
         <tr>
             <td>Non-max suppresion(nms)</td>
-            <td>0.4</td>
+            <td>0.6</td>
         </tr>
         <tr>
             <td>Intersection over union(IoU)</td>
@@ -947,26 +947,17 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                     tp[idx] = 1
                     count_new_true_positives[class_name] += 1
                 # if ovmax < 0: # if there is intersections between the bounding-boxes
-                #     print(str(ground_truth_img[0].split(".")[-2]))
-                    # f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>')
-                    # f_html.write('<h4><p style="color:blue;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
+
+                #     f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>')
+                #     f_html.write('<h4><p style="color:blue;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
                  
-                # if ground_truth_img[0]=="151.jpg":
-                #     #if (ground_truth_data[0]["class_name"] == class_name):
-                #     print(ovmax)
+                # if ground_truth_img[0]=="4.jpg":
+                #     if (ground_truth_data[0]["class_name"] == class_name):
+                #         print(ovmax)
                 if ovmax > 0: # if there is intersections between the bounding-boxes
-                    # if ground_truth_img[0]=="151.jpg":
-                    # #if (ground_truth_data[0]["class_name"] == class_name):
-                    #     print(ovmax)
-                    
                     f_html.write("<tr><td>"'<h4>' + str(ground_truth_img[0].split(".")[-2]) + '</h4>'"</td>")
-                    if (ground_truth_data[0]["class_name"] == class_name):
-                        f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
-                        f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
-                    if (ground_truth_data[0]["class_name"] != class_name):
-                        #f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
-                        f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
-                        f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
+                    f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
+                    f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
                     f_html.write("<td>"'<h4>'+ str(detection["confidence"]) +'</h4>'"</td>")
 
                     
@@ -987,40 +978,40 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
                     bb = [int(i) for i in bb]
 
-                  
-                    #if (ground_truth_data[0]["class_name"] == class_name):
-                    if ovmax > 0.08:
+                    #if ground_truth_img[0]=="42.jpg":
+                    if (ground_truth_data[0]["class_name"] == class_name):
+                        if ovmax > 0.3:
 
-                        f_html.write("<td>" + '<h4><p style="color:green;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
-                        f_html.write('<h4><p style="color:green;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
+                            f_html.write("<td>" + '<h4><p style="color:green;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
+                            f_html.write('<h4><p style="color:green;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
 
-                        """set empty to red"""
-                
-                        # f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>' +"</td>")
-                        # f_html.write("<td>" + '<h4><p style="color:red;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
-                        
-                        cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
-                
-                        #f_html.write("<th>" + '<p style="color:green;">True Positive</p>' + "</th>")
-                        #f_html.write("<td>" + str("True Positive") + "</td>")
-                        f_html.write("<td>"'<h4>True Positive</h4>'"</td>")
-                        cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),green,2)
+                            """set empty to red"""
+                    
+                            # f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>' +"</td>")
+                            # f_html.write("<td>" + '<h4><p style="color:red;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
+                            
+                            cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
+                    
+                            #f_html.write("<th>" + '<p style="color:green;">True Positive</p>' + "</th>")
+                            #f_html.write("<td>" + str("True Positive") + "</td>")
+                            f_html.write("<td>"'<h4>True Positive</h4>'"</td>")
+                            cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),green,2)
 
-                        tp[idx] = 1
-                        count_new_true_positives[class_name] += 1
+                            tp[idx] = 1
+                            count_new_true_positives[class_name] += 1
 
-                    else:
+                        else:
 
-                        f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
-                        f_html.write('<h4><p style="color:red;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
+                            f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
+                            f_html.write('<h4><p style="color:red;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
 
-                        cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
+                            cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
 
-                        #f_html.write("<td>" + '<p style="color:red;">False Positive</p>' + "</td>")
-                        #f_html.write("<td>" + str("False Positive") + "</td>")
-                        f_html.write("<td>"'<h4>False Positive</h4>'"</td>")
-                        cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),light_red,2)
-                        fp[idx] = 1
+                            #f_html.write("<td>" + '<p style="color:red;">False Positive</p>' + "</td>")
+                            #f_html.write("<td>" + str("False Positive") + "</td>")
+                            f_html.write("<td>"'<h4>False Positive</h4>'"</td>")
+                            cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),light_red,2)
+                            fp[idx] = 1
             
                     #cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
         
