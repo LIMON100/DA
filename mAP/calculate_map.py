@@ -10,7 +10,7 @@ import datetime
 from flask import flash
 import numpy as np
 
-MINOVERLAP = 0.3 # default value (defined in the PASCAL VOC2012 challenge)
+MINOVERLAP = 0.15 # default value (defined in the PASCAL VOC2012 challenge)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-na', '--no-animation', help="no animation is shown.", action="store_true")
@@ -254,15 +254,12 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
         
         for key in sorted_keys:
             fp_sorted.append(dictionary[key] - true_p_bar[key])
-            #fn_sorted.append(dictionary[key] - true_p_bar[key])
             tp_sorted.append(true_p_bar[key])
         fp_sorted = [2,3]
-        #plt.barh(range(n_classes), fp_sorted, color='crimson', label='False Positive')
+
         plt.barh(range(n_classes), tp_sorted, color='forestgreen', label='True Positive')
         plt.barh(range(n_classes), fn_sorted, color='orange', label='False Negative')
-        #plt.barh(range(n_classes), tp_sorted, align='center', color='pink', label='False Negatives', left=fp_sorted)
-        #plt.barh(range(n_classes), 10, align='center', color='pink', label='False Negatives')
-        #print("False positives" + ":" + str(true_p_bar))
+    
         # add legend
         plt.legend(loc='lower right')
         """
@@ -444,10 +441,8 @@ for txt_file in ground_truth_files_list:
 gt_classes = list(gt_counter_per_class.keys())
 # let's sort the classes alphabetically
 gt_classes = sorted(gt_classes)
-#print(gt_classes)
 n_classes = len(gt_classes)
-#print(gt_classes)
-#print(gt_counter_per_class)
+
 
 """
  Check format of the flag --set-class-iou (if used)
@@ -504,11 +499,10 @@ for class_index, class_name in enumerate(gt_classes):
                 error_msg += " Received: " + line
                 error(error_msg)
             if tmp_class_name == class_name:
-                #print(tmp_class_name, class_name)
-                #print("match")
+               
                 bbox = left + " " + top + " " + right + " " +bottom
                 bounding_boxes.append({"confidence":confidence, "file_id":file_id, "bbox":bbox})
-                #print(bounding_boxes)
+                
     # sort detection-results by decreasing confidence
     bounding_boxes.sort(key=lambda x:float(x['confidence']), reverse=True)
     with open(TEMP_FILES_PATH + "/" + class_name + "_dr.json", 'w') as outfile:
@@ -523,7 +517,7 @@ lamr_dictionary = {}
 # open file to store the output
 
 f_html = open("validation_report_new_helmet_model.html", "w")
-#f_html.write('<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">')
+
 
 message2='''
 <html>
@@ -584,7 +578,7 @@ message='''
         </tr>
         <tr>
             <td>Non-max suppresion(nms)</td>
-            <td>0.6</td>
+            <td>0.4</td>
         </tr>
         <tr>
             <td>Intersection over union(IoU)</td>
@@ -929,7 +923,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
                 file_double_name.append(ground_truth_img[0])
 
-                # if ground_truth_img[0]=="62.jpg":
+                # if ground_truth_img[0]=="111.jpg":
                 #     print(ovmax)
                 
                 # if ovmax < 0:
@@ -943,21 +937,29 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 if  ovmax <0:
-                    #print(ground_truth_img[0].split(".")[-2])
                     tp[idx] = 1
                     count_new_true_positives[class_name] += 1
                 # if ovmax < 0: # if there is intersections between the bounding-boxes
-
-                #     f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>')
-                #     f_html.write('<h4><p style="color:blue;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
+                #     print(str(ground_truth_img[0].split(".")[-2]))
+                    # f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>')
+                    # f_html.write('<h4><p style="color:blue;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
                  
-                # if ground_truth_img[0]=="4.jpg":
-                #     if (ground_truth_data[0]["class_name"] == class_name):
-                #         print(ovmax)
+                # if ground_truth_img[0]=="151.jpg":
+                #     #if (ground_truth_data[0]["class_name"] == class_name):
+                #     print(ovmax)
                 if ovmax > 0: # if there is intersections between the bounding-boxes
+                    # if ground_truth_img[0]=="151.jpg":
+                    # #if (ground_truth_data[0]["class_name"] == class_name):
+                    #     print(ovmax)
+                    
                     f_html.write("<tr><td>"'<h4>' + str(ground_truth_img[0].split(".")[-2]) + '</h4>'"</td>")
-                    f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
-                    f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
+                    if (ground_truth_data[0]["class_name"] == class_name):
+                        f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
+                        f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
+                    if (ground_truth_data[0]["class_name"] != class_name):
+                        #f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
+                        f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
+                        f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
                     f_html.write("<td>"'<h4>'+ str(detection["confidence"]) +'</h4>'"</td>")
 
                     
@@ -978,40 +980,40 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
                     bb = [int(i) for i in bb]
 
-                    #if ground_truth_img[0]=="42.jpg":
-                    if (ground_truth_data[0]["class_name"] == class_name):
-                        if ovmax > 0.3:
+                  
+                    #if (ground_truth_data[0]["class_name"] == class_name):
+                    if ovmax >= 0.01:
 
-                            f_html.write("<td>" + '<h4><p style="color:green;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
-                            f_html.write('<h4><p style="color:green;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
+                        f_html.write("<td>" + '<h4><p style="color:green;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
+                        f_html.write('<h4><p style="color:green;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
 
-                            """set empty to red"""
-                    
-                            # f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>' +"</td>")
-                            # f_html.write("<td>" + '<h4><p style="color:red;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
-                            
-                            cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
-                    
-                            #f_html.write("<th>" + '<p style="color:green;">True Positive</p>' + "</th>")
-                            #f_html.write("<td>" + str("True Positive") + "</td>")
-                            f_html.write("<td>"'<h4>True Positive</h4>'"</td>")
-                            cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),green,2)
+                        """set empty to red"""
+                
+                        # f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>' +"</td>")
+                        # f_html.write("<td>" + '<h4><p style="color:red;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
+                        
+                        cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
+                
+                        #f_html.write("<th>" + '<p style="color:green;">True Positive</p>' + "</th>")
+                        #f_html.write("<td>" + str("True Positive") + "</td>")
+                        f_html.write("<td>"'<h4>True Positive</h4>'"</td>")
+                        cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),green,2)
 
-                            tp[idx] = 1
-                            count_new_true_positives[class_name] += 1
+                        tp[idx] = 1
+                        count_new_true_positives[class_name] += 1
 
-                        else:
+                    else:
 
-                            f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
-                            f_html.write('<h4><p style="color:red;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
+                        f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
+                        f_html.write('<h4><p style="color:red;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
 
-                            cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
+                        cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
 
-                            #f_html.write("<td>" + '<p style="color:red;">False Positive</p>' + "</td>")
-                            #f_html.write("<td>" + str("False Positive") + "</td>")
-                            f_html.write("<td>"'<h4>False Positive</h4>'"</td>")
-                            cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),light_red,2)
-                            fp[idx] = 1
+                        #f_html.write("<td>" + '<p style="color:red;">False Positive</p>' + "</td>")
+                        #f_html.write("<td>" + str("False Positive") + "</td>")
+                        f_html.write("<td>"'<h4>False Positive</h4>'"</td>")
+                        cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),light_red,2)
+                        fp[idx] = 1
             
                     #cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
         
@@ -1290,17 +1292,26 @@ total_fn_sidewalk = []
 total_fn_helmet = []
 total_fn_chin_strap = []
 
-for key, value in count_new_false_negative.items():    
-    if key == "With_Helmet":
-        total_fn_road.append(value)
-    elif key == "Without_Helmet":
-        total_fn_sidewalk.append(value)
-    elif key == "Helmet":
-        total_fn_helmet.append(value)
-    elif key == "Chin_Strap":
-        total_fn_chin_strap.append(value)
+"""
+uncomment line 1303-1314 if necessary
 
-#print(total_fn_road, total_fn_sidewalk)
+"""
+
+# for key, value in count_new_false_negative.items():    
+#     if key == "road":
+#         total_fn_road.append(value)
+#     elif key == "sidewalk":
+#         total_fn_sidewalk.append(value)
+#     elif key == "Helmet":
+#         total_fn_helmet.append(value)
+#     elif key == "Chin_Strap":
+#         total_fn_chin_strap.append(value)
+
+# #print(total_fn_road, total_fn_sidewalk)
+# print(count_new_false_negative)
+
+## Instead of put value into array, put values into dictionary.
+
 """
  Write number of ground-truth objects per class to results.txt
 """
@@ -1498,8 +1509,9 @@ fp_r = fp2[0]
 fp_s = fp2[1]
 
 #print(total_fn_road)
-fp_n_r = total_fn_road[0]
-fp_n_s = total_fn_sidewalk[0]
+
+# fp_n_r = total_fn_road[0]
+# fp_n_s = total_fn_sidewalk[0]
 
 # fp_n_r = total_fn_helmet[0]
 # fp_n_s = total_fn_chin_strap[0]
@@ -1672,16 +1684,19 @@ for key,value in new_graph.items():
 
 #print(check_false_positive_cnt)
 
+#print("FP count check............")
+#print(new_graph)
+
 dict2 = {}
 for key,value in new_graph.items():
 
-    if check_false_positive_cnt == 2:
+    if check_false_positive_cnt == 4:
         append_value(dict2, key, value[0])
         append_value(dict2, key, value[2])
         category_names = ['True Positives', 'False Negatives']
         make_metric_graph_for_two_matric(dict2, category_names)
 
-    elif check_false_positive_cnt != 2:
+    elif check_false_positive_cnt != 4:
         append_value(dict2, key, value[0])
         append_value(dict2, key, value[1])
         append_value(dict2, key, value[2])
