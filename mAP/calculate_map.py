@@ -923,34 +923,13 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
                 file_double_name.append(ground_truth_img[0])
 
-                # if ground_truth_img[0]=="111.jpg":
-                #     print(ovmax)
-                
-                # if ovmax < 0:
-                #     break
-
-                # f_html.write("<tr><td>"'<h4>' + str(ground_truth_img[0].split(".")[-2]) + '</h4>'"</td>")
-                # f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
-                # f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
-                # f_html.write("<td>"'<h4>'+ str(detection["confidence"]) +'</h4>'"</td>")
-
-
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 if  ovmax <0:
                     tp[idx] = 1
                     count_new_true_positives[class_name] += 1
-                # if ovmax < 0: # if there is intersections between the bounding-boxes
-                #     print(str(ground_truth_img[0].split(".")[-2]))
-                    # f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>')
-                    # f_html.write('<h4><p style="color:blue;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
-                 
-                # if ground_truth_img[0]=="151.jpg":
-                #     #if (ground_truth_data[0]["class_name"] == class_name):
-                #     print(ovmax)
+               
                 if ovmax > 0: # if there is intersections between the bounding-boxes
-                    # if ground_truth_img[0]=="151.jpg":
-                    # #if (ground_truth_data[0]["class_name"] == class_name):
-                    #     print(ovmax)
+                    
                     
                     f_html.write("<tr><td>"'<h4>' + str(ground_truth_img[0].split(".")[-2]) + '</h4>'"</td>")
                     if (ground_truth_data[0]["class_name"] == class_name):
@@ -968,20 +947,16 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                     cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
                     cv2.rectangle(img_cumulative,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
        
-                    #f_html.write("<th>" + "x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1]) + "(blue)"+"</th>")
-                    #f_html.write("<th>" + "w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3]) + "(blue)"+"</th>")
+                    
 
                     f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1])+'</p></h4>')
                     f_html.write('<h4><p style="color:blue;">'+"w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3])+'</p></h4>' +"</td>")
                     
                     blue_flag=1
                     cv2.putText(img_cumulative, class_name, (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
-                    #cv2.putText(img, "Actual annotation/ground-truth", (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
-
+                    
                     bb = [int(i) for i in bb]
 
-                  
-                    #if (ground_truth_data[0]["class_name"] == class_name):
                     if ovmax >= 0.01:
 
                         f_html.write("<td>" + '<h4><p style="color:green;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
@@ -989,13 +964,10 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
                         """set empty to red"""
                 
-                        # f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>' +"</td>")
-                        # f_html.write("<td>" + '<h4><p style="color:red;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
                         
                         cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
                 
-                        #f_html.write("<th>" + '<p style="color:green;">True Positive</p>' + "</th>")
-                        #f_html.write("<td>" + str("True Positive") + "</td>")
+      
                         f_html.write("<td>"'<h4>True Positive</h4>'"</td>")
                         cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),green,2)
 
@@ -1009,13 +981,11 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
                         cv2.putText(img, "False positive", (bb[0],bb[1] - 5), font, 0.6, light_red, 1, cv2.LINE_AA)
 
-                        #f_html.write("<td>" + '<p style="color:red;">False Positive</p>' + "</td>")
-                        #f_html.write("<td>" + str("False Positive") + "</td>")
                         f_html.write("<td>"'<h4>False Positive</h4>'"</td>")
                         cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),light_red,2)
                         fp[idx] = 1
             
-                    #cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
+    
         
                     cv2.rectangle(img_cumulative,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
                     cv2.putText(img_cumulative, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
@@ -1034,8 +1004,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                     f_html.write("<td>" + '<a><img src="'+ str(output_img_path) +'"></a>' + "</td>")
                     f_html.write("</tr>")
                     
-        
-        # print(cnt)
+
         # compute precision/recall
         cumsum = 0
         for idx, val in enumerate(fp):
@@ -1110,8 +1079,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
     mAP = sum_AP / n_classes
     text = "mAP = {0:.2f}%".format(mAP*100)
     output_file.write(text + "\n")
-    #print(text)
-    #f_html.write("</tr>")
+
 
 
 #print(count_new_true_positives)
@@ -1144,13 +1112,9 @@ if show_animation:
             img = cv2.imread(img_path)
         # draw false negatives
         for obj in ground_truth_data:
-            #print(class_name)
-            #print(obj)
+ 
             if not obj['used']:
 
-                #count_new_false_negative[obj["class_name"]] = 0
-
-                #img_cumulative_path.split("/")[-1].split(".")[-2])
                 bbgt = [ int(round(float(x))) for x in obj["bbox"].split() ]
                 cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),purple,2)
                 
@@ -1216,7 +1180,7 @@ f_html.write("</body></html>")
 # remove the temp_files directory
 shutil.rmtree(TEMP_FILES_PATH)
 
-#print(count_new_false_negative)
+
 
 """
  Count total of detection-results
@@ -1237,10 +1201,9 @@ for txt_file in dr_files_list:
         else:
             # if class didn't exist yet
             det_counter_per_class[class_name] = 1
-#print(det_counter_per_class)
+
 dr_classes = list(det_counter_per_class.keys())
 
-#print(det_counter_per_class)
 """
  Plot the total number of occurences of each class in the ground-truth
 """
@@ -1297,20 +1260,6 @@ uncomment line 1303-1314 if necessary
 
 """
 
-# for key, value in count_new_false_negative.items():    
-#     if key == "road":
-#         total_fn_road.append(value)
-#     elif key == "sidewalk":
-#         total_fn_sidewalk.append(value)
-#     elif key == "Helmet":
-#         total_fn_helmet.append(value)
-#     elif key == "Chin_Strap":
-#         total_fn_chin_strap.append(value)
-
-# #print(total_fn_road, total_fn_sidewalk)
-# print(count_new_false_negative)
-
-## Instead of put value into array, put values into dictionary.
 
 """
  Write number of ground-truth objects per class to results.txt
@@ -1329,65 +1278,7 @@ for class_name in dr_classes:
     if class_name not in gt_classes:
         count_true_positives[class_name] = 0
 
-# print(count_true_positives)
-# print(count_new_true_positives)
 
-
-"""
- Plot the total number of occurences of each class in the "detection-results" folder
-"""
-# if draw_plot:
-#     window_title = "detection-results-info"
-#     # Plot title
-#     plot_title = "detection-results\n"
-#     plot_title += "(" + str(len(dr_files_list)) + " files and "
-#     count_non_zero_values_in_dictionary = sum(int(x) > 0 for x in list(det_counter_per_class.values()))
-#     plot_title += str(count_non_zero_values_in_dictionary) + " detected classes)"
-#     # end Plot title
-#     x_label = "Number of objects per class"
-#     output_path2 = "d.png"
-#     #message = "<pre><h1>" + "No. of object per class" + "</h1></pre> <br>\n"
-#     #f_html.write(message)
-#     #f_html.write('<a><img src="'+ str(output_path) +'"></a>')
-#     #f_html.write("</body></html>")
-#     to_show = False
-#     plot_color = 'forestgreen'
-#     true_p_bar = count_new_true_positives #count_true_positives
-#     #print(true_p_bar)
-#     draw_plot_func(
-#         det_counter_per_class,
-#         len(det_counter_per_class),
-#         window_title,
-#         plot_title,
-#         x_label,
-#         output_path2,
-#         to_show,
-#         plot_color,
-#         true_p_bar
-#         )
-
-"""
- Write number of detected objects per class to output.txt
-"""
-
-# tp = []
-# fp = []
-
-# with open(output_files_path + "/output.txt", 'a') as output_file:
-#     output_file.write("\n# Number of detected objects per class\n")
-#     for class_name in sorted(dr_classes):
-#         n_det = det_counter_per_class[class_name]
-#         text = class_name + ": " + str(n_det)
-#         text += " (tp:" + str(count_true_positives[class_name]) + ""
-#         text += ", fp:" + str(n_det - count_true_positives[class_name]) + ")\n"
-
-#         tp2 = str(count_true_positives[class_name])
-#         fp2 = str(n_det - count_true_positives[class_name])
-#         tp.append(tp2)
-#         fp.append(fp2)
-#         output_file.write(text)
-
-#print(tp,fp)
 """"
 Check the updated one which doesnot have false positive
 """
@@ -1427,43 +1318,9 @@ with open(output_files_path + "/output.txt", 'a') as output_file:
         output_file.write(text)
         append_value(new_graph, class_name, int(tp3))
         append_value(new_graph, class_name, int(fp3))
-        # if class_name == "road":
-        #     append_value(new_graph,class_name,2)
-        # else:
-        #     append_value(new_graph,class_name,0)
 
         append_value(new_graph, class_name, int(fn3))
 
-#print(tp2,fp2)
-#print(count_new_true_positives)
-#print("New graph")
-#print(new_graph)
-
-"""
- Draw log-average miss rate plot (Show lamr of all classes in decreasing order)
-"""
-# if draw_plot:
-#     window_title = "lamr"
-#     plot_title = "log-average miss rate"
-#     x_label = "log-average miss rate"
-#     output_path = output_files_path + "/lamr.png"
-#     message = "<pre><h1>" + "Low average miss rate" + "</h1></pre> <br>\n"
-#     f_html.write(message)
-#     f_html.write('<a><img src="'+ str(output_path) +'"></a>')
-#     f_html.write("</body></html>")
-#     to_show = False
-#     plot_color = 'royalblue'
-#     draw_plot_func(
-#         lamr_dictionary,
-#         n_classes,
-#         window_title,
-#         plot_title,
-#         x_label,
-#         output_path,
-#         to_show,
-#         plot_color,
-#         ""
-#         )
 
 """
  Draw mAP plot (Show AP's of all classes in decreasing order)
@@ -1508,15 +1365,6 @@ tp_s = tp2[1]
 fp_r = fp2[0]
 fp_s = fp2[1]
 
-#print(total_fn_road)
-
-# fp_n_r = total_fn_road[0]
-# fp_n_s = total_fn_sidewalk[0]
-
-# fp_n_r = total_fn_helmet[0]
-# fp_n_s = total_fn_chin_strap[0]
-
-#print(tp, fp)
 
 """ 
 Ploting conf-matrix
@@ -1526,43 +1374,6 @@ Ploting conf-matrix
 
 results = {}
 category_names = []
-
-def category_select():
-    if fp_r == str(0) and fp_s == str(0):
-
-        category_names = ['True Positives', 'False Negatives']
-
-        results = {
-        
-            'road': [int(tp_r),  int(fp_n_r)],
-            'sidewalk': [int(tp_s), int(fp_n_s)]
-            
-        }
-    
-    elif fp_r == str(0):
-
-        category_names = ['True Positives', 'False Positives', 'False Negatives']
-
-        results = {
-        
-            'road': [int(tp_r), 0, int(fp_n_r)],
-            'sidewalk': [int(tp_s), int(fp_s), int(fp_n_s)]
-            
-        }
-    elif fp_s == str(0):
-
-        category_names = ['True Positives', 'False Positives', 'False Negatives']
-
-        results = {
-        
-            'road': [int(tp_r), int(fp_r), int(fp_n_r)],
-            'sidewalk': [int(tp_s), 0, int(fp_n_s)]
-            
-        }
-
-    return results, category_names
-
-
 
 
 def make_metric_graph_for_three_matric(results, category_names):
@@ -1657,15 +1468,6 @@ def make_metric_graph_for_two_matric(results, category_names):
 
 
 
-#results_category = category_select()
-
-
-#make_metric_graph(new_graph, category_names)
-#make_metric_graph(results_category[0], results_category[1])
-
-
-
-
 """
 Loop through the category_list
 """
@@ -1679,13 +1481,6 @@ for key,value in new_graph.items():
     if value[1] == 0:
         check_false_positive_cnt += 1
         
-    # elif value[1] == 0:
-    #     check_false_positive_cnt += 1
-
-#print(check_false_positive_cnt)
-
-#print("FP count check............")
-#print(new_graph)
 
 dict2 = {}
 for key,value in new_graph.items():
@@ -1717,19 +1512,7 @@ f_html.write("</body></html>")
 
 
 """ Accuracy """
-# tp = int(tp2[0]) + int(tp2[1])
-# ac = tp / total_objects
-# #print(ac * 100)
 
-
-# file_path = "output/" + "ac.txt"
-# file = open(file_path,"w")
-# file.write("Precision:" + '%.2f' % (ac * 100) + "%")
-# file.close()
-
-# message = "<pre><h1>" + "Accuracy:" + '%.2f' % (ac * 100) + "%" + "</h1></pre> <br>\n"
-# f_html.write(message)
-# f_html.write("</body></html>")
 
 total_tp = 0
 for key, value in new_graph.items():
