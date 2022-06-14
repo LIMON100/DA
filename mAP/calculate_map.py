@@ -357,12 +357,7 @@ if show_animation:
      Load each of the ground-truth files into a temporary ".json" file.
      Create a list of all the class names present in the ground-truth (gt_classes).
 """
-# get a list with the ground-truth files
 
-# ground_truth_files_list = glob.glob(GT_PATH + '/*.txt')
-# if len(ground_truth_files_list) == 0:
-#     error("Error: No ground-truth files found!")
-# ground_truth_files_list.sort()
 
 
 ground_truth_files_list = glob.glob(GT_PATH2 + '/*.txt')
@@ -380,13 +375,6 @@ for txt_file in ground_truth_files_list:
     file_id = txt_file.split(".txt", 1)[0]
     file_id = os.path.basename(os.path.normpath(file_id))
 
-    # check if there is a correspondent detection-results file
-
-    # temp_path = os.path.join(DR_PATH, (file_id + ".txt"))
-    # if not os.path.exists(temp_path):
-    #     error_msg = "Error. File not found: {}\n".format(temp_path)
-    #     error_msg += "(You can avoid this error message by running extra/intersect-gt-and-dr.py)"
-    #     error(error_msg)
 
     lines_list = file_lines_to_list(txt_file)
     # create ground-truth dictionary
@@ -441,6 +429,7 @@ for txt_file in ground_truth_files_list:
 gt_classes = list(gt_counter_per_class.keys())
 # let's sort the classes alphabetically
 gt_classes = sorted(gt_classes)
+#print(gt_classes)
 n_classes = len(gt_classes)
 
 
@@ -454,8 +443,7 @@ if specific_iou_flagged:
         '\n --set-class-iou [class_1] [IoU_1] [class_2] [IoU_2] [...]'
     if n_args % 2 != 0:
         error('Error, missing arguments. Flag usage:' + error_msg)
-    # [class_1] [IoU_1] [class_2] [IoU_2]
-    # specific_iou_classes = ['class_1', 'class_2']
+
     specific_iou_classes = args.set_class_iou[::2] # even
     # iou_list = ['IoU_1', 'IoU_2']
     iou_list = args.set_class_iou[1::2] # odd
@@ -499,10 +487,11 @@ for class_index, class_name in enumerate(gt_classes):
                 error_msg += " Received: " + line
                 error(error_msg)
             if tmp_class_name == class_name:
-               
+                #print(tmp_class_name, class_name)
+                #print("match")
                 bbox = left + " " + top + " " + right + " " +bottom
                 bounding_boxes.append({"confidence":confidence, "file_id":file_id, "bbox":bbox})
-                
+                #print(bounding_boxes)
     # sort detection-results by decreasing confidence
     bounding_boxes.sort(key=lambda x:float(x['confidence']), reverse=True)
     with open(TEMP_FILES_PATH + "/" + class_name + "_dr.json", 'w') as outfile:
@@ -780,7 +769,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
         """
         dr_file = TEMP_FILES_PATH + "/" + class_name + "_dr.json"
         dr_data = json.load(open(dr_file))
-        #print(dr_data)
+ 
 
         """
          Assign detection-results to ground-truth objects
@@ -836,8 +825,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                             ovmax = ov
                             gt_match = obj
 
-            #print(ground_truth_data[0]["class_name"])
-            # assign detection as true positive/don't care/false positive
+
             if show_animation:
                 status = "NO MATCH FOUND!" # status is only used in the animation
             # set minimum overlap
@@ -905,8 +893,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                 rank_pos = str(idx+1) # rank position (idx starts at 0)
                 text = "Detection #rank: " + rank_pos + " confidence: {0:.2f}% ".format(float(detection["confidence"])*100)
                 img, line_width = draw_text_in_image(img, text, (margin, v_pos), white, 0)
-                #print(text)
-                #check here now
+        
 
                 color = light_red
                 if status == "MATCH!":
@@ -923,13 +910,15 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
                 file_double_name.append(ground_truth_img[0])
 
+
+
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 if  ovmax <0:
                     tp[idx] = 1
                     count_new_true_positives[class_name] += 1
-               
+   
                 if ovmax > 0: # if there is intersections between the bounding-boxes
-                    
+           
                     
                     f_html.write("<tr><td>"'<h4>' + str(ground_truth_img[0].split(".")[-2]) + '</h4>'"</td>")
                     if (ground_truth_data[0]["class_name"] == class_name):
@@ -947,16 +936,18 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                     cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
                     cv2.rectangle(img_cumulative,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),light_blue,2)
        
-                    
 
                     f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str(bbgt[0]) + " " + "y:" + str(bbgt[1])+'</p></h4>')
                     f_html.write('<h4><p style="color:blue;">'+"w:" + str(bbgt[2]) + " " + "h:" + str(bbgt[3])+'</p></h4>' +"</td>")
                     
                     blue_flag=1
                     cv2.putText(img_cumulative, class_name, (bbgt[0],bbgt[1] - 5), font, 0.6, light_blue, 1, cv2.LINE_AA)
-                    
+           
+
                     bb = [int(i) for i in bb]
 
+                  
+                    #if (ground_truth_data[0]["class_name"] == class_name):
                     if ovmax >= 0.01:
 
                         f_html.write("<td>" + '<h4><p style="color:green;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
@@ -967,7 +958,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                         
                         cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
                 
-      
+            
                         f_html.write("<td>"'<h4>True Positive</h4>'"</td>")
                         cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),green,2)
 
@@ -985,7 +976,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                         cv2.rectangle(img,(bb[0],bb[1]),(bb[2],bb[3]),light_red,2)
                         fp[idx] = 1
             
-    
+            
         
                     cv2.rectangle(img_cumulative,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
                     cv2.putText(img_cumulative, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
@@ -1005,7 +996,6 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                     f_html.write("</tr>")
                     
 
-        # compute precision/recall
         cumsum = 0
         for idx, val in enumerate(fp):
             fp[idx] += cumsum
@@ -1046,8 +1036,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
         """
         if draw_plot:
             plt.plot(rec, prec, '-o')
-            # add a new penultimate point to the list (mrec[-2], 0.0)
-            # since the last line segment (and respective area) do not affect the AP value
+
             area_under_curve_x = mrec[:-1] + [mrec[-2]] + [mrec[-1]]
             area_under_curve_y = mprec[:-1] + [0.0] + [mprec[-1]]
             plt.fill_between(area_under_curve_x, 0, area_under_curve_y, alpha=0.2, edgecolor='r')
@@ -1064,11 +1053,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
             axes = plt.gca() # gca - get current axes
             axes.set_xlim([0.0,1.0])
             axes.set_ylim([0.0,1.05]) # .05 to give some extra space
-            # Alternative option -> wait for button to be pressed
-            #while not plt.waitforbuttonpress(): pass # wait for key display
-            # Alternative option -> normal display
-            #plt.show()
-            # save the plot
+          
             fig.savefig(output_files_path + "/classes/" + class_name + ".png")
             plt.cla() # clear axes for next plot
 
@@ -1080,9 +1065,6 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
     text = "mAP = {0:.2f}%".format(mAP*100)
     output_file.write(text + "\n")
 
-
-
-#print(count_new_true_positives)
 
 """
  Draw false negatives
@@ -1100,8 +1082,7 @@ if show_animation:
     purple = (128,0,128)
     for tmp_file in gt_files:
         ground_truth_data = json.load(open(tmp_file))
-        #print(ground_truth_data)
-        # get name of corresponding image
+
         start = TEMP_FILES_PATH + '/'
         img_id = tmp_file[tmp_file.find(start)+len(start):tmp_file.rfind('_ground_truth.json')]
         img_cumulative_path = output_files_path + "/images/" + img_id + ".jpg"
@@ -1112,7 +1093,7 @@ if show_animation:
             img = cv2.imread(img_path)
         # draw false negatives
         for obj in ground_truth_data:
- 
+        
             if not obj['used']:
 
                 bbgt = [ int(round(float(x))) for x in obj["bbox"].split() ]
@@ -1180,7 +1161,7 @@ f_html.write("</body></html>")
 # remove the temp_files directory
 shutil.rmtree(TEMP_FILES_PATH)
 
-
+#print(count_new_false_negative)
 
 """
  Count total of detection-results
@@ -1201,9 +1182,10 @@ for txt_file in dr_files_list:
         else:
             # if class didn't exist yet
             det_counter_per_class[class_name] = 1
-
+#print(det_counter_per_class)
 dr_classes = list(det_counter_per_class.keys())
 
+#print(det_counter_per_class)
 """
  Plot the total number of occurences of each class in the ground-truth
 """
@@ -1279,6 +1261,15 @@ for class_name in dr_classes:
         count_true_positives[class_name] = 0
 
 
+"""
+ Plot the total number of occurences of each class in the "detection-results" folder
+"""
+
+
+"""
+ Write number of detected objects per class to output.txt
+"""
+
 """"
 Check the updated one which doesnot have false positive
 """
@@ -1298,8 +1289,7 @@ def append_value(dict_obj, key, value):
         # Append the value in list
         dict_obj[key].append(value)
     else:
-        # As key is not in dict,
-        # so, add key-value pair
+
         dict_obj[key] = value
 
 with open(output_files_path + "/output.txt", 'a') as output_file:
@@ -1318,9 +1308,14 @@ with open(output_files_path + "/output.txt", 'a') as output_file:
         output_file.write(text)
         append_value(new_graph, class_name, int(tp3))
         append_value(new_graph, class_name, int(fp3))
+     
 
         append_value(new_graph, class_name, int(fn3))
 
+
+"""
+ Draw log-average miss rate plot (Show lamr of all classes in decreasing order)
+"""
 
 """
  Draw mAP plot (Show AP's of all classes in decreasing order)
@@ -1366,14 +1361,51 @@ fp_r = fp2[0]
 fp_s = fp2[1]
 
 
+
 """ 
 Ploting conf-matrix
 """
 
-#print(fp_r, fp_s)
 
 results = {}
 category_names = []
+
+def category_select():
+    if fp_r == str(0) and fp_s == str(0):
+
+        category_names = ['True Positives', 'False Negatives']
+
+        results = {
+        
+            'road': [int(tp_r),  int(fp_n_r)],
+            'sidewalk': [int(tp_s), int(fp_n_s)]
+            
+        }
+    
+    elif fp_r == str(0):
+
+        category_names = ['True Positives', 'False Positives', 'False Negatives']
+
+        results = {
+        
+            'road': [int(tp_r), 0, int(fp_n_r)],
+            'sidewalk': [int(tp_s), int(fp_s), int(fp_n_s)]
+            
+        }
+    elif fp_s == str(0):
+
+        category_names = ['True Positives', 'False Positives', 'False Negatives']
+
+        results = {
+        
+            'road': [int(tp_r), int(fp_r), int(fp_n_r)],
+            'sidewalk': [int(tp_s), 0, int(fp_n_s)]
+            
+        }
+
+    return results, category_names
+
+
 
 
 def make_metric_graph_for_three_matric(results, category_names):
@@ -1480,7 +1512,6 @@ for key,value in new_graph.items():
 
     if value[1] == 0:
         check_false_positive_cnt += 1
-        
 
 dict2 = {}
 for key,value in new_graph.items():
