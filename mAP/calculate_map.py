@@ -11,8 +11,12 @@ from flask import flash
 import numpy as np
 
 
-def main():
-    
+root_dir = r"I:\JumpWatts\Dataset\map\test-helmt\new-mp\test_code\all_files"
+
+def calculate_mean_avg_pres(obj_path):
+
+    print(obj_path)
+
     MINOVERLAP = 0.3 # default value (defined in the PASCAL VOC2012 challenge)
 
     parser = argparse.ArgumentParser()
@@ -43,25 +47,24 @@ def main():
     # DR_PATH = os.path.join(os.getcwd(), 'helmet_224x224', 'detection-results')
     # # if there are no images then no animation can be shown
     # IMG_PATH = os.path.join(os.getcwd(), 'helmet_224x224', 'images')
+    
 
-
-
-
-    GT_PATH2 = os.path.join(os.getcwd(), 'new2', 'actual')
-    GT_PATH = os.path.join(os.getcwd(), 'new2', 'ground-truth')
-    DR_PATH = os.path.join(os.getcwd(), 'new2', 'detection-results')
+    GT_PATH2 = os.path.join(os.getcwd(), obj_path, 'actual')
+    GT_PATH = os.path.join(os.getcwd(), obj_path, 'ground-truth')
+    DR_PATH = os.path.join(os.getcwd(), obj_path, 'detection-results')
     # if there are no images then no animation can be shown
-    IMG_PATH = os.path.join(os.getcwd(), 'new2', '224')
+    IMG_PATH = os.path.join(os.getcwd(), obj_path, 'images')
 
-
+    #GT_PATH3 = os.path.join(os.getcwd(), root_dir, 'actual')
 
     # GT_PATH2 = r"I:\JumpWatts\Dataset\map\test-helmt\new-mp\sep_cls\helmet_224x224\actual" #os.path.join(os.getcwd(), 'helmet_224x224', 'actual')
     # GT_PATH = "I:/JumpWatts/Dataset/map/test-helmt/new-mp/sep_cls/helmet_224x224/helmet_224x224/ground-truth" #os.path.join(os.getcwd(), 'helmet_224x224', 'ground-truth')
     # DR_PATH = "I:/JumpWatts/Dataset/map/test-helmt/new-mp/sep_cls/helmet_224x224/helmet_224x224/detection-results" #os.path.join(os.getcwd(), 'helmet_224x224', 'detection-results')
     # # if there are no images then no animation can be shown
     # IMG_PATH = "I:/JumpWatts/Dataset/map/test-helmt/new-mp/sep_cls/helmet_224x224/helmet_224x224/images" #os.path.join(os.getcwd(), 'helmet_224x224', 'images')
-    # print("own path..")
     # print(GT_PATH2)
+    # print("Path3.............#################################..")
+    # print(GT_PATH3)
 
     if os.path.exists(IMG_PATH): 
         for dirpath, dirnames, files in os.walk(IMG_PATH):
@@ -1147,7 +1150,7 @@ def main():
     """
     count_new_false_negative = {}
 
-    name_of_classes = "scripts/extra/classes.txt"
+    name_of_classes = obj_path + "/" + "classes.txt"
     lines = file_lines_to_list(name_of_classes)
 
     for line in range(0, len(lines)):
@@ -1772,4 +1775,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+
+    for obj in os.scandir(root_dir):
+
+        if obj.is_dir():
+            #print(obj.path)
+            calculate_mean_avg_pres(obj.path)
