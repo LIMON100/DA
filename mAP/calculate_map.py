@@ -102,7 +102,7 @@ def calculate_mean_avg_pres(obj_path, f_sumary_html):
     file.write(obj_path.split('\\')[-1])
     file.write("\n")
 
-    MINOVERLAP = 0.3 # default value (defined in the PASCAL VOC2012 challenge)
+    MINOVERLAP = 0.1 # default value (defined in the PASCAL VOC2012 challenge)
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-na', '--no-animation', help="no animation is shown.", action="store_true")
@@ -1051,7 +1051,7 @@ def calculate_mean_avg_pres(obj_path, f_sumary_html):
 
                     
                         #if (ground_truth_data[0]["class_name"] == class_name):
-                        if ovmax >= 0.3:
+                        if ovmax >= 0.1:
 
                             f_html.write("<td>" + '<h4><p style="color:green;">'+"x:" + str(bb[0]) + " " + "y:" + str(bb[1])+'</p></h4>')
                             f_html.write('<h4><p style="color:green;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
@@ -1182,11 +1182,6 @@ def calculate_mean_avg_pres(obj_path, f_sumary_html):
         file.write(text + "\n")
         map_global = text
 
-        #print(text)
-        #f_html.write("</tr>")
-
-
-    #print(count_new_true_positives)
 
     """
     Draw false negatives
@@ -1199,6 +1194,12 @@ def calculate_mean_avg_pres(obj_path, f_sumary_html):
     for line in range(0, len(lines)):
         #print(lines[line])
         count_new_false_negative[lines[line]] = 0
+
+
+    TEMP_FN_PATH = obj_path + "\\" + "False_Negative"
+    if not os.path.exists(TEMP_FN_PATH):
+        os.makedirs(TEMP_FN_PATH)
+
 
     if show_animation:
         #pink = (203,192,255)
@@ -1220,6 +1221,12 @@ def calculate_mean_avg_pres(obj_path, f_sumary_html):
                 #print(class_name)
                 #print(obj)
                 if not obj['used']:
+
+                    TEMP_FN_PATH2 = TEMP_FN_PATH + "/" + str(img_cumulative_path.split("/")[-1].split(".")[-2]) + ".jpg"
+                    TEMP_FN_PATH3 = obj_path + "/images/" + str(img_cumulative_path.split("/")[-1].split(".")[-2]) + ".jpg"
+                    img_fn = cv2.imread(TEMP_FN_PATH3)
+
+                    cv2.imwrite(TEMP_FN_PATH2, img_fn)
 
                     #count_new_false_negative[obj["class_name"]] = 0
 
