@@ -1228,9 +1228,33 @@ def calculate_mean_avg_pres(obj_path, f_sumary_html):
 
                     cv2.imwrite(TEMP_FN_PATH2, img_fn)
 
-                    #count_new_false_negative[obj["class_name"]] = 0
 
-                    #img_cumulative_path.split("/")[-1].split(".")[-2])
+                    """
+                        take the xml according to the image name
+                    """
+
+
+                    format = {'xml'}
+    
+                    xml_dir = obj_path + "\\" + "backup"
+                    image_dir = obj_path + "\\" + "False_Negative"
+
+                    for obj1 in os.scandir(xml_dir):
+                        if obj1.is_dir():
+                            print("Dir:",obj1.name)
+                        elif obj1.is_file():
+                            if obj1.name.split(".")[-1] in format:
+
+                                xml_name = str(img_cumulative_path.split("/")[-1].split(".")[-2]) + ".xml"
+
+                                if obj1.name == xml_name:
+                                    xml_file_dir = xml_dir + "\\" + xml_name
+                                    image_file_dir = image_dir + "\\" + xml_name
+                                    shutil.copy(xml_file_dir, image_file_dir)
+                                    break
+
+
+
                     bbgt = [ int(round(float(x))) for x in obj["bbox"].split() ]
                     cv2.rectangle(img,(bbgt[0],bbgt[1]),(bbgt[2],bbgt[3]),purple,2)
                     
@@ -1487,12 +1511,6 @@ def calculate_mean_avg_pres(obj_path, f_sumary_html):
         f = os.path.join(pr_directory, filename)
         f_html.write('<a><img src="'+ f  +'"></a>')
 
-
-    # tp_r = tp2[0]
-    # tp_s = tp2[1]
-    # fp_r = fp2[0]
-    # fp_s = fp2[1]
-
   
     """ 
     Ploting conf-matrix
@@ -1624,17 +1642,6 @@ def calculate_mean_avg_pres(obj_path, f_sumary_html):
             category_names = ['True Positives', 'False Positives', 'False Negatives']
             make_metric_graph_for_three_matric(dict2, category_names)
 
-
-
-
-
-
-
-
-
-    # print(new_graph)
-    # for key, value in new_graph.items():
-    #     f_sumary_html.write("<tr><td>"'<h4>' + str() + '</h4>'"</td>")
 
 
     """
