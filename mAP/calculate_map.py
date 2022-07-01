@@ -9,13 +9,98 @@ import math
 import datetime
 from flask import flash
 import numpy as np
+import shutil
 
 
-root_dir = r"I:\JumpWatts\Dataset\map\test-helmt\new-mp\test_code\all_files"
+#root_dir = r"I:\JumpWatts\Dataset\map\test-helmt\new-mp\Map_with_multiple_model_output\all_new"
+#root_dir = "I:/JumpWatts/Dataset/map/test-helmt/new-mp/Map_with_multiple_model_output/all_files"
 
-def calculate_mean_avg_pres(obj_path):
+map_global = 0
 
-    print(obj_path)
+def summery_report(root_dir):
+    report_name2 = root_dir  + "/" + "summary_report.html"
+    f_summary_html = open(report_name2, "w")
+
+    message_report_summary='''
+    <html>
+    <head>
+        <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            }
+
+            td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            }
+
+            tr:nth-child(even) {
+
+            }
+        </style>
+
+    </head>
+    <body>
+        <h1><p style="text-align:center;">Summary</p></h1>
+    </body>
+    <br>\n
+    </html>'''
+
+    f_summary_html.write(message_report_summary)
+
+
+    message_message_report_summary2='''
+    <html>
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <script src="filter.js"></script>
+        
+    </head>
+
+    <body>
+        <table id="emp-table">
+            <thead>
+                <th>Model version </th>
+
+                <th >No of objects per class</th>
+
+                <th>True Positive</th>
+
+                <th>False Positive </th>
+
+                <th>False Negative </th>
+            
+                <th>Mean Average Precision</th>
+
+                <th>Accuracy </th>
+        
+            </thead>
+            <tbody>
+
+    '''
+
+    f_summary_html.write(message_message_report_summary2)
+
+    return f_summary_html
+
+def calculate_mean_avg_pres(obj_path, f_sumary_html):
+
+    file_path = root_dir + "/" + "log_file_name" + ".txt"
+    file = open(file_path,"a")
+
+    f_sumary_html.write("<tr><td>"'<h5>' + str(obj_path.split('\\')[-1]) + '</h5>'"</td>")
+
+    #print(obj_path)
+    #root_dir2.split('/')[-1]
+    file.write(obj_path.split('\\')[-1])
+    file.write("\n")
 
     MINOVERLAP = 0.3 # default value (defined in the PASCAL VOC2012 challenge)
 
@@ -42,29 +127,13 @@ def calculate_mean_avg_pres(obj_path):
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
-    # GT_PATH2 = os.path.join(os.getcwd(), 'helmet_224x224', 'actual')
-    # GT_PATH = os.path.join(os.getcwd(), 'helmet_224x224', 'ground-truth')
-    # DR_PATH = os.path.join(os.getcwd(), 'helmet_224x224', 'detection-results')
-    # # if there are no images then no animation can be shown
-    # IMG_PATH = os.path.join(os.getcwd(), 'helmet_224x224', 'images')
-    
-
     GT_PATH2 = os.path.join(os.getcwd(), obj_path, 'actual')
     GT_PATH = os.path.join(os.getcwd(), obj_path, 'ground-truth')
     DR_PATH = os.path.join(os.getcwd(), obj_path, 'detection-results')
     # if there are no images then no animation can be shown
     IMG_PATH = os.path.join(os.getcwd(), obj_path, 'images')
 
-    #GT_PATH3 = os.path.join(os.getcwd(), root_dir, 'actual')
 
-    # GT_PATH2 = r"I:\JumpWatts\Dataset\map\test-helmt\new-mp\sep_cls\helmet_224x224\actual" #os.path.join(os.getcwd(), 'helmet_224x224', 'actual')
-    # GT_PATH = "I:/JumpWatts/Dataset/map/test-helmt/new-mp/sep_cls/helmet_224x224/helmet_224x224/ground-truth" #os.path.join(os.getcwd(), 'helmet_224x224', 'ground-truth')
-    # DR_PATH = "I:/JumpWatts/Dataset/map/test-helmt/new-mp/sep_cls/helmet_224x224/helmet_224x224/detection-results" #os.path.join(os.getcwd(), 'helmet_224x224', 'detection-results')
-    # # if there are no images then no animation can be shown
-    # IMG_PATH = "I:/JumpWatts/Dataset/map/test-helmt/new-mp/sep_cls/helmet_224x224/helmet_224x224/images" #os.path.join(os.getcwd(), 'helmet_224x224', 'images')
-    # print(GT_PATH2)
-    # print("Path3.............#################################..")
-    # print(GT_PATH3)
 
     if os.path.exists(IMG_PATH): 
         for dirpath, dirnames, files in os.walk(IMG_PATH):
@@ -367,7 +436,7 @@ def calculate_mean_avg_pres(obj_path):
     TEMP_FILES_PATH = ".temp_files"
     if not os.path.exists(TEMP_FILES_PATH): # if it doesn't exist already
         os.makedirs(TEMP_FILES_PATH)
-    output_files_path = "output"
+    output_files_path = obj_path + "/" + "output"
     if os.path.exists(output_files_path): # if it exist already
         # reset the output directory
         shutil.rmtree(output_files_path)
@@ -383,13 +452,7 @@ def calculate_mean_avg_pres(obj_path):
         Load each of the ground-truth files into a temporary ".json" file.
         Create a list of all the class names present in the ground-truth (gt_classes).
     """
-    # get a list with the ground-truth files
-
-    # ground_truth_files_list = glob.glob(GT_PATH + '/*.txt')
-    # if len(ground_truth_files_list) == 0:
-    #     error("Error: No ground-truth files found!")
-    # ground_truth_files_list.sort()
-
+ 
 
     ground_truth_files_list = glob.glob(GT_PATH2 + '/*.txt')
     if len(ground_truth_files_list) == 0:
@@ -406,13 +469,7 @@ def calculate_mean_avg_pres(obj_path):
         file_id = txt_file.split(".txt", 1)[0]
         file_id = os.path.basename(os.path.normpath(file_id))
 
-        # check if there is a correspondent detection-results file
-
-        # temp_path = os.path.join(DR_PATH, (file_id + ".txt"))
-        # if not os.path.exists(temp_path):
-        #     error_msg = "Error. File not found: {}\n".format(temp_path)
-        #     error_msg += "(You can avoid this error message by running extra/intersect-gt-and-dr.py)"
-        #     error(error_msg)
+    
 
         lines_list = file_lines_to_list(txt_file)
         # create ground-truth dictionary
@@ -507,7 +564,7 @@ def calculate_mean_avg_pres(obj_path):
     for class_index, class_name in enumerate(gt_classes):
         bounding_boxes = []
         for txt_file in dr_files_list:
-            #print(txt_file)
+  
             # the first time it checks if all the corresponding ground-truth files exist
             file_id = txt_file.split(".txt",1)[0]
             file_id = os.path.basename(os.path.normpath(file_id))
@@ -545,8 +602,9 @@ def calculate_mean_avg_pres(obj_path):
     lamr_dictionary = {}
     # open file to store the output
 
-    f_html = open("validation_report_new_helmet_model.html", "w")
-    #f_html.write('<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">')
+    report_name = obj_path + "/" + "validation_report_new_helmet_model.html"
+    f_html = open(report_name, "w")
+ 
 
     message2='''
     <html>
@@ -822,13 +880,13 @@ def calculate_mean_avg_pres(obj_path):
                 if show_animation:
                     # find ground truth image
                     ground_truth_img = glob.glob1(IMG_PATH, file_id + ".*")
-                    #tifCounter = len(glob.glob1(myPath,"*.tif"))
+          
                     if len(ground_truth_img) == 0:
                         error("Error. Image not found with id: " + file_id)
                     elif len(ground_truth_img) > 1:
                         error("Error. Multiple image with id: " + file_id)
                     else: # found image
-                        #print(IMG_PATH + "/" + ground_truth_img[0])
+               
                         # Load image
                         img = cv2.imread(IMG_PATH + "/" + ground_truth_img[0])
                         # load image with draws of multiple detections
@@ -865,7 +923,7 @@ def calculate_mean_avg_pres(obj_path):
                                 ovmax = ov
                                 gt_match = obj
 
-                #print(ground_truth_data[0]["class_name"])
+            
                 # assign detection as true positive/don't care/false positive
                 if show_animation:
                     status = "NO MATCH FOUND!" # status is only used in the animation
@@ -952,34 +1010,16 @@ def calculate_mean_avg_pres(obj_path):
 
                     file_double_name.append(ground_truth_img[0])
 
-                    # if ground_truth_img[0]=="111.jpg":
-                    #     print(ovmax)
-                    
-                    # if ovmax < 0:
-                    #     break
-
-                    # f_html.write("<tr><td>"'<h4>' + str(ground_truth_img[0].split(".")[-2]) + '</h4>'"</td>")
-                    # f_html.write("<td>"'<h4>'+ str(ground_truth_data[0]["class_name"]) + '</h4>'"</td>")
-                    # f_html.write("<td>"'<h4>'+ str(class_name) +'</h4>'"</td>")
-                    # f_html.write("<td>"'<h4>'+ str(detection["confidence"]) +'</h4>'"</td>")
+    
 
 
                     font = cv2.FONT_HERSHEY_SIMPLEX
                     if  ovmax <0:
                         tp[idx] = 1
                         count_new_true_positives[class_name] += 1
-                    # if ovmax < 0: # if there is intersections between the bounding-boxes
-                    #     print(str(ground_truth_img[0].split(".")[-2]))
-                        # f_html.write("<td>" + '<h4><p style="color:blue;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>')
-                        # f_html.write('<h4><p style="color:blue;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
-                    
-                    # if ground_truth_img[0]=="151.jpg":
-                    #     #if (ground_truth_data[0]["class_name"] == class_name):
-                    #     print(ovmax)
+                
                     if ovmax > 0: # if there is intersections between the bounding-boxes
-                        # if ground_truth_img[0]=="151.jpg":
-                        # #if (ground_truth_data[0]["class_name"] == class_name):
-                        #     print(ovmax)
+              
                         
                         f_html.write("<tr><td>"'<h4>' + str(ground_truth_img[0].split(".")[-2]) + '</h4>'"</td>")
                         if (ground_truth_data[0]["class_name"] == class_name):
@@ -1017,9 +1057,7 @@ def calculate_mean_avg_pres(obj_path):
                             f_html.write('<h4><p style="color:green;">'+"w:" + str(bb[2]) + " " + "h:" + str(bb[3])+'</p></h4>' +"</td>")
 
                             """set empty to red"""
-                    
-                            # f_html.write("<td>" + '<h4><p style="color:red;">'+"x:" + str("N/A") + " " + "y:" + str("N/A")+'</p></h4>' +"</td>")
-                            # f_html.write("<td>" + '<h4><p style="color:red;">'+"w:" + str("N/A") + " " + "h:" + str("N/A")+'</p></h4>' +"</td>")
+            
                             
                             cv2.putText(img, "True positive", (bb[0], bb[1] - 5), font, 0.6, green, 1, cv2.LINE_AA)
                     
@@ -1139,6 +1177,11 @@ def calculate_mean_avg_pres(obj_path):
         mAP = sum_AP / n_classes
         text = "mAP = {0:.2f}%".format(mAP*100)
         output_file.write(text + "\n")
+
+        file.write("\n# mAP of all classes\n")
+        file.write(text + "\n")
+        map_global = text
+
         #print(text)
         #f_html.write("</tr>")
 
@@ -1246,7 +1289,6 @@ def calculate_mean_avg_pres(obj_path):
     # remove the temp_files directory
     shutil.rmtree(TEMP_FILES_PATH)
 
-    #print(count_new_false_negative)
 
     """
     Count total of detection-results
@@ -1315,41 +1357,34 @@ def calculate_mean_avg_pres(obj_path):
             elif key == "Without_Helmet":
                 total_sidewalk.append(value)
 
-    #print(total_objects)
-
-    total_fn_road = []
-    total_fn_sidewalk = []
-    total_fn_helmet = []
-    total_fn_chin_strap = []
-
-    """
-    uncomment line 1303-1314 if necessary
-
-    """
-
-    # for key, value in count_new_false_negative.items():    
-    #     if key == "road":
-    #         total_fn_road.append(value)
-    #     elif key == "sidewalk":
-    #         total_fn_sidewalk.append(value)
-    #     elif key == "Helmet":
-    #         total_fn_helmet.append(value)
-    #     elif key == "Chin_Strap":
-    #         total_fn_chin_strap.append(value)
-
-    # #print(total_fn_road, total_fn_sidewalk)
-    # print(count_new_false_negative)
-
-    ## Instead of put value into array, put values into dictionary.
 
     """
     Write number of ground-truth objects per class to results.txt
     """
+    list_dict = []
     with open(output_files_path + "/output.txt", 'a') as output_file:
         output_file.write("\n# Number of ground-truth objects per class\n")
+
+        #file.write("\n# Number of ground-truth objects per class\n")
     
         for class_name in sorted(gt_counter_per_class):
             output_file.write(class_name + ": " + str(gt_counter_per_class[class_name]) + "\n")
+            file.write(class_name + ": " + str(gt_counter_per_class[class_name]) + "\n")
+
+
+
+    """
+        save no of object per class into summary html
+    """
+
+    f_sumary_html.write("<td>")
+    for key, value in gt_counter_per_class.items():
+        l1 = str(str(key) + ' : ' + str(value))
+        f_sumary_html.write('<h5>'+ str(l1) +'</h4>')
+    
+    f_sumary_html.write("</td>")
+
+
 
     """
     Finish counting true positives
@@ -1359,65 +1394,7 @@ def calculate_mean_avg_pres(obj_path):
         if class_name not in gt_classes:
             count_true_positives[class_name] = 0
 
-    # print(count_true_positives)
-    # print(count_new_true_positives)
 
-
-    """
-    Plot the total number of occurences of each class in the "detection-results" folder
-    """
-    # if draw_plot:
-    #     window_title = "detection-results-info"
-    #     # Plot title
-    #     plot_title = "detection-results\n"
-    #     plot_title += "(" + str(len(dr_files_list)) + " files and "
-    #     count_non_zero_values_in_dictionary = sum(int(x) > 0 for x in list(det_counter_per_class.values()))
-    #     plot_title += str(count_non_zero_values_in_dictionary) + " detected classes)"
-    #     # end Plot title
-    #     x_label = "Number of objects per class"
-    #     output_path2 = "d.png"
-    #     #message = "<pre><h1>" + "No. of object per class" + "</h1></pre> <br>\n"
-    #     #f_html.write(message)
-    #     #f_html.write('<a><img src="'+ str(output_path) +'"></a>')
-    #     #f_html.write("</body></html>")
-    #     to_show = False
-    #     plot_color = 'forestgreen'
-    #     true_p_bar = count_new_true_positives #count_true_positives
-    #     #print(true_p_bar)
-    #     draw_plot_func(
-    #         det_counter_per_class,
-    #         len(det_counter_per_class),
-    #         window_title,
-    #         plot_title,
-    #         x_label,
-    #         output_path2,
-    #         to_show,
-    #         plot_color,
-    #         true_p_bar
-    #         )
-
-    """
-    Write number of detected objects per class to output.txt
-    """
-
-    # tp = []
-    # fp = []
-
-    # with open(output_files_path + "/output.txt", 'a') as output_file:
-    #     output_file.write("\n# Number of detected objects per class\n")
-    #     for class_name in sorted(dr_classes):
-    #         n_det = det_counter_per_class[class_name]
-    #         text = class_name + ": " + str(n_det)
-    #         text += " (tp:" + str(count_true_positives[class_name]) + ""
-    #         text += ", fp:" + str(n_det - count_true_positives[class_name]) + ")\n"
-
-    #         tp2 = str(count_true_positives[class_name])
-    #         fp2 = str(n_det - count_true_positives[class_name])
-    #         tp.append(tp2)
-    #         fp.append(fp2)
-    #         output_file.write(text)
-
-    #print(tp,fp)
     """"
     Check the updated one which doesnot have false positive
     """
@@ -1443,6 +1420,7 @@ def calculate_mean_avg_pres(obj_path):
 
     with open(output_files_path + "/output.txt", 'a') as output_file:
         output_file.write("\n# Number of detected objects per class\n")
+        file.write("\n# Number of detected objects per class\n")
         for class_name in sorted(dr_classes):
             n_det = det_counter_per_class[class_name]
             text = class_name + ": " + str(n_det)
@@ -1454,46 +1432,16 @@ def calculate_mean_avg_pres(obj_path):
             fn3 = str(count_new_false_negative[class_name])
             tp2.append(tp3)
             fp2.append(fp3)
+
             output_file.write(text)
+            file.write(text)
+
             append_value(new_graph, class_name, int(tp3))
             append_value(new_graph, class_name, int(fp3))
-            # if class_name == "road":
-            #     append_value(new_graph,class_name,2)
-            # else:
-            #     append_value(new_graph,class_name,0)
+
 
             append_value(new_graph, class_name, int(fn3))
 
-    #print(tp2,fp2)
-    #print(count_new_true_positives)
-    #print("New graph")
-    #print(new_graph)
-
-    """
-    Draw log-average miss rate plot (Show lamr of all classes in decreasing order)
-    """
-    # if draw_plot:
-    #     window_title = "lamr"
-    #     plot_title = "log-average miss rate"
-    #     x_label = "log-average miss rate"
-    #     output_path = output_files_path + "/lamr.png"
-    #     message = "<pre><h1>" + "Low average miss rate" + "</h1></pre> <br>\n"
-    #     f_html.write(message)
-    #     f_html.write('<a><img src="'+ str(output_path) +'"></a>')
-    #     f_html.write("</body></html>")
-    #     to_show = False
-    #     plot_color = 'royalblue'
-    #     draw_plot_func(
-    #         lamr_dictionary,
-    #         n_classes,
-    #         window_title,
-    #         plot_title,
-    #         x_label,
-    #         output_path,
-    #         to_show,
-    #         plot_color,
-    #         ""
-    #         )
 
     """
     Draw mAP plot (Show AP's of all classes in decreasing order)
@@ -1526,73 +1474,25 @@ def calculate_mean_avg_pres(obj_path):
     message = "<pre><h1>" + "Precision Recall Curve" + "</h1></pre> <br>\n"
     f_html.write(message)
 
-    pr_directory = "output/classes/"
+    pr_directory = obj_path + "/" + "output/classes/"
 
     for filename in os.listdir(pr_directory):
         f = os.path.join(pr_directory, filename)
         f_html.write('<a><img src="'+ f  +'"></a>')
 
 
-    tp_r = tp2[0]
-    tp_s = tp2[1]
-    fp_r = fp2[0]
-    fp_s = fp2[1]
+    # tp_r = tp2[0]
+    # tp_s = tp2[1]
+    # fp_r = fp2[0]
+    # fp_s = fp2[1]
 
-    #print(total_fn_road)
-
-    # fp_n_r = total_fn_road[0]
-    # fp_n_s = total_fn_sidewalk[0]
-
-    # fp_n_r = total_fn_helmet[0]
-    # fp_n_s = total_fn_chin_strap[0]
-
-    #print(tp, fp)
-
+  
     """ 
     Ploting conf-matrix
     """
 
-    #print(fp_r, fp_s)
-
     results = {}
     category_names = []
-
-    def category_select():
-        if fp_r == str(0) and fp_s == str(0):
-
-            category_names = ['True Positives', 'False Negatives']
-
-            results = {
-            
-                'road': [int(tp_r),  int(fp_n_r)],
-                'sidewalk': [int(tp_s), int(fp_n_s)]
-                
-            }
-        
-        elif fp_r == str(0):
-
-            category_names = ['True Positives', 'False Positives', 'False Negatives']
-
-            results = {
-            
-                'road': [int(tp_r), 0, int(fp_n_r)],
-                'sidewalk': [int(tp_s), int(fp_s), int(fp_n_s)]
-                
-            }
-        elif fp_s == str(0):
-
-            category_names = ['True Positives', 'False Positives', 'False Negatives']
-
-            results = {
-            
-                'road': [int(tp_r), int(fp_r), int(fp_n_r)],
-                'sidewalk': [int(tp_s), 0, int(fp_n_s)]
-                
-            }
-
-        return results, category_names
-
-
 
 
     def make_metric_graph_for_three_matric(results, category_names):
@@ -1687,20 +1587,10 @@ def calculate_mean_avg_pres(obj_path):
 
 
 
-    #results_category = category_select()
-
-
-    #make_metric_graph(new_graph, category_names)
-    #make_metric_graph(results_category[0], results_category[1])
-
-
-
-
     """
     Loop through the category_list
     """
 
-    #print(new_graph)
     check_false_positive_cnt = 0
 
 
@@ -1709,13 +1599,7 @@ def calculate_mean_avg_pres(obj_path):
         if value[1] == 0:
             check_false_positive_cnt += 1
             
-        # elif value[1] == 0:
-        #     check_false_positive_cnt += 1
 
-    #print(check_false_positive_cnt)
-
-    #print("FP count check............")
-    #print(new_graph)
 
     dict2 = {}
     for key,value in new_graph.items():
@@ -1736,7 +1620,49 @@ def calculate_mean_avg_pres(obj_path):
 
 
 
-    plt.savefig("output" + "/detection_results.jpg")
+
+
+
+
+
+    # print(new_graph)
+    # for key, value in new_graph.items():
+    #     f_sumary_html.write("<tr><td>"'<h4>' + str() + '</h4>'"</td>")
+
+
+    """
+        put Tp,Fp,Fn into summary html
+    """
+
+    f_sumary_html.write("<td>")
+    for key, value in new_graph.items():
+        l1 = str(str(key) + ' : ' + str(value[0]))
+        f_sumary_html.write('<h5>'+ str(l1) +'</h4>')
+    
+    f_sumary_html.write("</td>")
+
+
+    f_sumary_html.write("<td>")
+    for key, value in new_graph.items():
+        l1 = str(str(key) + ' : ' + str(value[1]))
+        f_sumary_html.write('<h5>'+ str(l1) +'</h4>')
+    
+    f_sumary_html.write("</td>")
+
+
+    f_sumary_html.write("<td>")
+    for key, value in new_graph.items():
+        l1 = str(str(key) + ' : ' + str(value[2]))
+        f_sumary_html.write('<h5>'+ str(l1) +'</h4>')
+    
+    f_sumary_html.write("</td>")
+
+
+
+
+
+    ot = obj_path + "/"
+    plt.savefig(ot + "output" + "/detection_results.jpg")
     #plt.show()
 
     message = "<pre><h1>" + "True positve, False positive, False negetive Graph" + "</h1></pre> <br>\n"
@@ -1747,19 +1673,6 @@ def calculate_mean_avg_pres(obj_path):
 
 
     """ Accuracy """
-    # tp = int(tp2[0]) + int(tp2[1])
-    # ac = tp / total_objects
-    # #print(ac * 100)
-
-
-    # file_path = "output/" + "ac.txt"
-    # file = open(file_path,"w")
-    # file.write("Precision:" + '%.2f' % (ac * 100) + "%")
-    # file.close()
-
-    # message = "<pre><h1>" + "Accuracy:" + '%.2f' % (ac * 100) + "%" + "</h1></pre> <br>\n"
-    # f_html.write(message)
-    # f_html.write("</body></html>")
 
     total_tp = 0
     for key, value in new_graph.items():
@@ -1774,10 +1687,35 @@ def calculate_mean_avg_pres(obj_path):
     f_html.write("</body></html>")
 
 
+    f_sumary_html.write("<td>"'<h5>' + str(map_global) + '</h5>'"</td>")
+    f_sumary_html.write("<td>"'<h5>' + '%.2f' % (ac2 * 100) + "%" +'</h5>'"</td>")
+
+
+    filter_src = 'I:/JumpWatts/Dataset/map/test-helmt/new-mp/filter.js'
+    filter_dst = obj_path + "/" + 'filter.js'
+
+    shutil.copy(filter_src, filter_dst)
+
+
+    css_src = 'I:/JumpWatts/Dataset/map/test-helmt/new-mp/style.css'
+    css_dst = obj_path + "/" + "style.css"
+
+    shutil.copy(css_src, css_dst)
+
+    file.write("\n")
+    file.close()
+
+    
+
+
 if __name__ == "__main__":
+
+    root_dir = r"I:\JumpWatts\Dataset\map\test-helmt\new-mp\Map_with_multiple_model_output\all_version"
+
+    f_sumary_html = summery_report(root_dir)
 
     for obj in os.scandir(root_dir):
 
         if obj.is_dir():
             #print(obj.path)
-            calculate_mean_avg_pres(obj.path)
+            calculate_mean_avg_pres(obj.path, f_sumary_html)
