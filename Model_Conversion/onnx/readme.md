@@ -12,3 +12,11 @@ If you only save the model weights, you will not be able to convert it to ONNX, 
 
 ### Input names and output names
 You will need to define the input names and the output names of your model. These metadata are used to describe the inputs and outputs of your model.
+
+
+### Input sample
+ONNX will trace the different layers of the model in order to create a graph of theses layers.
+
+While tracing the layers, ONNX will also need an input sample to understand how the model is working and what operators are used to compute the outputs.
+
+The selected sample will be the input of the first layer of the model and is also used to define the input shape of the model.
