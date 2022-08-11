@@ -21,3 +21,6 @@ ONNX will trace the different layers of the model in order to create a graph of 
 ### Dynamic axes
 ONNX requires to know the dynamic axes of the model. Most of the time during the conversion, you will use a batch size of 1. But if you want to have a model that can take a batch of N samples, you will need to define the dynamic axes of your model to accept a batch of N samples. This way the exported model will thus accept inputs of size [batch_size, 1, 224, 224] where `batch_size` can be any value between 1 and
 
+
+### Conversion evaluation
+Finally, you will need to evaluate the converted model to ensure that it is a sustainable ONNX model and it is working as expected. There are two separate steps to evaluate the converted model.
