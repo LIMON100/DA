@@ -25,6 +25,8 @@ ONNX requires to know the dynamic axes of the model. Most of the time during the
 ### Conversion evaluation
 Finally, you will need to evaluate the converted model to ensure that it is a sustainable ONNX model and it is working as expected. There are two separate steps to evaluate the converted model. 
 
+
 The first step is to use the ONNX’s API to check the model’s validity. This is done by calling the onnx.checker.check_model function. This will verify the model’s structure and confirm if the model has a valid ONNX scheme or not. Each node in the model isevaluated by checking the inputs and outputs of the node. 
 
-The second step is to compare the output of the converted model with the output of the original model. This is done by comparing both outputs with the numpy.testing.assert_allclose function.
+The second step is to compare the output of the converted model with the output of the original model. This is done by comparing both outputs with the numpy.testing.assert_allclose function. This function will compare the two outputs and will raise an error if the two outputs are not equal, based on the rtol and atol parameters. It’s common to use a rtol of 1e-03 and atol of 1e-05 for the comparison, where rtol stands for the relative tolerance and atol is the absolute tolerance.
+
