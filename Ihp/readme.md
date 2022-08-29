@@ -36,3 +36,43 @@ Learning rate is also one of the major factors that work for the speed of conver
 By looking at the above situation we can say that we need to fix the learning rate in a dynamic nature so that when the parameter vector oscillates, the learning rate should be slower and when it is steady then the learning rate should be higher.
 
 One more method to adjust the optimal learning rate is to use an adaptive learning rate. This kind of learning rate can also be considered as applying different learning rates at each parameter of the neural network. The adaptive learning rate has proven the faster convergence of neural networks by making the convergence of weights at the same speed.
+
+Choosing Target Values
+This tip highlights a more careful consideration of the choice of target variables.
+
+In the case of binary classification problems, target variables may be in the set {0, 1} for the limits of the logistic activation function or in the set {-1, 1} for the hyperbolic tangent function when using the cross-entropy or hinge loss functions respectively, even in modern neural networks.
+
+The authors suggest that using values at the extremes of the activation function may make learning the problem more challenging.
+
+Common wisdom might seem to suggest that the target values be set at the value of the sigmoid’s asymptotes. However, this has several drawbacks.
+
+They suggest that achieving values at the point of saturation of the activation function (edges) may require larger and larger weights, which could make the model unstable.
+
+One approach to addressing this is to use target values away from the edge of the output function.
+
+Choose target values at the point of the maximum second derivative on the sigmoid so as to avoid saturating the output units.
+
+I recall that in the 1990s, it was common advice to use target values in the set of {0.1 and 0.9} with the logistic function instead of {0 and 1}.
+
+
+Tip #6: Initializing the Weights
+This tip highlights the importance of the choice of weight initialization scheme and how it is tightly related to the choice of activation function.
+
+In the context of the sigmoid activation function, they suggest that the initial weights for the network should be chosen to activate the function in the linear region (e.g. the line part not the curve part of the S-shape).
+
+The starting values of the weights can have a significant effect on the training process. Weights should be chosen randomly but in such a way that the sigmoid is primarily activated in its linear region.
+
+This advice may also apply to the weight activation for the ReLU where the linear part of the function is positive.
+
+This highlights the important impact that initial weights have on learning, where large weights saturate the activation function, resulting in unstable learning, and small weights result in very small gradients and, in turn, slow learning. Ideally, we seek model weights that are over the linear (non-curvy) part of the activation function.
+
+… weights that range over the sigmoid’s linear region have the advantage that (1) the gradients are large enough that learning can proceed and (2) the network will learn the linear part of the mapping before the more difficult nonlinear part.
+
+The authors suggest a random weight initialization scheme that uses the number of nodes in the previous layer, the so-called fan-in. This is interesting as it is a precursor of what became known as the Xavier weight initialization scheme.
+
+Radial Basis Functions vs Sigmoid Units
+This final tip is perhaps less relevant today, and I recommend trying radial basis functions (RBF) instead of sigmoid activation functions in some cases.
+
+The authors suggest that training RBF units can be faster than training units using a sigmoid activation.
+
+Unlike sigmoidal units which can cover the entire space, a single RBF unit covers only a small local region of the input space. This can be an advantage because learning can be faster.
